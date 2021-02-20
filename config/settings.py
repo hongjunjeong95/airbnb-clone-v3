@@ -41,8 +41,9 @@ DJANGO_APPS = [
 
 PROJECT_APPS = [
     "users.apps.UsersConfig",
-    "rooms.apps.RoomsConfig",
     "core.apps.CoreConfig",
+    "rooms.apps.RoomsConfig",
+    "photos.apps.PhotosConfig",
 ]
 
 THIRD_PARTY_APPS = ["django_countries"]
@@ -130,3 +131,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 AUTH_USER_MODEL = "users.User"
+
+# MEDIA
+MEDIA_ROOT = BASE_DIR / "uploads"
+MEDIA_URL = "/media/"
