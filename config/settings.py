@@ -44,6 +44,7 @@ PROJECT_APPS = [
     "core.apps.CoreConfig",
     "rooms.apps.RoomsConfig",
     "photos.apps.PhotosConfig",
+    "reviews.apps.ReviewsConfig",
 ]
 
 THIRD_PARTY_APPS = ["django_countries"]
