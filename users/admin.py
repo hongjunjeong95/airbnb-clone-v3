@@ -5,6 +5,9 @@ from . import models
 
 @admin.register(models.User)
 class CustomUserAdmin(UserAdmin):
+
+    """ Custom User Admin """
+
     list_display = (
         "username",
         "first_name",

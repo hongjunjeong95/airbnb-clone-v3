@@ -15,3 +15,5 @@ class ListAdmin(admin.ModelAdmin):
 
     def count_rooms(self, obj):
         return obj.rooms.count()
+
+    count_rooms.short_description = "Room count"
