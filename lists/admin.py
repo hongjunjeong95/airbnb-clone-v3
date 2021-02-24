@@ -1,3 +1,17 @@
 from django.contrib import admin
+from . import models
 
-# Register your models here.
+
+@admin.register(models.List)
+class ListAdmin(admin.ModelAdmin):
+
+    """ List Admin Definition """
+
+    list_display = ("__str__", "user", "count_rooms")
+    search_fields = ("user",)
+
+    raw_id_fields = ("user",)
+    filter_horizontal = ("rooms",)
+
+    def count_rooms(self, obj):
+        return obj.rooms.count()
