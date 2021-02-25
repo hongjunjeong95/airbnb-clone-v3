@@ -6,14 +6,16 @@ from reservations import models as reservation_models
 from users import models as user_models
 from rooms import models as room_models
 
+NAME = "reservations"
+
 
 class Command(BaseCommand):
 
-    help = "This command creates many reservations"
+    help = f"This command creates many {NAME}"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--number", type=int, help="How many reservations do you want to create"
+            "--number", type=int, help=f"How many {NAME} do you want to create"
         )
 
     def handle(self, *args, **options):
@@ -33,6 +35,4 @@ class Command(BaseCommand):
             },
         )
         seeder.execute()
-        self.stdout.write(
-            self.style.SUCCESS(f"Successfully create {number} reservations")
-        )
+        self.stdout.write(self.style.SUCCESS(f"Successfully create {number} {NAME}"))

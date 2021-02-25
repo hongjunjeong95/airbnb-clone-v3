@@ -1,10 +1,12 @@
 from django.core.management.base import BaseCommand
 from rooms.models import Facility
 
+NAME = "facilities"
+
 
 class Command(BaseCommand):
 
-    help = "This command creates many facilities"
+    help = f"This command creates many {NAME}"
 
     def handle(self, *args, **options):
         facilities = [
@@ -19,4 +21,4 @@ class Command(BaseCommand):
         for facility in facilities:
             Facility.objects.create(name=facility)
 
-        self.stdout.write(self.style.SUCCESS("Create facilities"))
+        self.stdout.write(self.style.SUCCESS(f"Create {NAME}"))

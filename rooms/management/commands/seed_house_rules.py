@@ -1,10 +1,12 @@
 from django.core.management.base import BaseCommand
 from rooms.models import HouseRule
 
+NAME = "house rules"
+
 
 class Command(BaseCommand):
 
-    help = "This command creates some house rules"
+    help = f"This command creates some {NAME}"
 
     def handle(self, *args, **options):
         house_rules = [
@@ -19,4 +21,4 @@ class Command(BaseCommand):
         for house_rule in house_rules:
             HouseRule.objects.create(name=house_rule)
 
-        self.stdout.write(self.style.SUCCESS("Create house rules"))
+        self.stdout.write(self.style.SUCCESS(f"Create {NAME}"))
