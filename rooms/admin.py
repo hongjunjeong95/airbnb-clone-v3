@@ -57,7 +57,7 @@ class RoomAdmin(admin.ModelAdmin):
         "city",
     )
 
-    search_fields = ("^city", "name", "host__username")
+    search_fields = ("^city", "address", "name", "host__username")
 
     fieldsets = (
         (

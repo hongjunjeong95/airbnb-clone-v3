@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Home{% endblock page_title %}
+
+{% block content %}
+  <div>
+    <div>
+      {% include 'mixins/room_card.html' with rooms=rooms %}
+      <div>
+        {% include 'mixins/page_number.html' with page=page_obj %}
+      </div>
+    </div>
+  </div>
+{% endblock content %}

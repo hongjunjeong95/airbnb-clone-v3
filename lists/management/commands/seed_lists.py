@@ -1,4 +1,4 @@
-from random import choice, randint
+from random import randint
 
 from django.core.management.base import BaseCommand
 from django.contrib.admin.utils import flatten
