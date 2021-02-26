@@ -1,1 +1,29 @@
-{{rooms}}
+<ul>
+  {% for room in rooms %}
+    <li>
+      <a href="#">
+        <div style="background-image:url('{{room.get_first_photo}}')">
+        picture
+          <div>
+            {% if room.host.superhost %}
+              <span>Superhost</span>
+            {% endif %}
+          </div>
+        </div>
+        <div>
+          <div>
+            <i class="fas fa-star"></i>
+            <span>{{room.get_review_points}}</span>
+            <span>({{room.reviews.count}})</span>
+          </div>
+          <div>
+            {{room.country}} &bull; {{room.address}}
+          </div>
+        </div>
+      </a>
+      <a href="#">
+        <i class="far fa-heart"></i>
+      </a>
+    </li>
+  {% endfor %}
+</ul>
