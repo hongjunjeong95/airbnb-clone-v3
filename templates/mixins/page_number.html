@@ -1,1 +1,22 @@
-{{page}}
+{% if page.has_previous %}
+  {% if page_sector|add:-4 <= 1 %}
+    <a href="?page=1" class="mr-3 text-lg font-semibold">Prev</a>
+  {% else %}
+    <a href="?page={{page_sector|add:-4}}">Prev</a>
+  {% endif %}
+{% endif %}
+
+{% for number in '12345'|make_list %}
+  {% if page_sector|add:number <= page.paginator.num_pages %}
+    <a href="?page={{page_sector|add:number}}"
+    >{{page_sector|add:number}}</a>
+  {% endif %}
+{% endfor %} 
+
+{% if page.has_next %}
+  {% if page_sector|add:6 >= page.paginator.num_pages %}
+    <a href="?page={{page.paginator.num_pages}}">Next</a>
+  {% else %}
+    <a href="?page={{page_sector|add:6}}">Next</a>
+  {% endif %}
+{% endif %}
