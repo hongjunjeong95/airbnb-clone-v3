@@ -1,0 +1,17 @@
+<ul>
+  {% if user.is_authenticated %}
+    <li class="nav_link">
+      <a href="#">Profile</a>
+    </li>
+    <li class="nav_link">
+      <a href="#">Log Out</a>
+    </li>
+  {% else %}
+    <li class="nav_link">
+      <a href="#">Log In</a>
+    </li>
+    <li class="nav_link">
+      <a href="#">Sign Up</a>
+    </li>
+  {% endif %}
+</ul>
