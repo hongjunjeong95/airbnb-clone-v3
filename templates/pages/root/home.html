@@ -3,10 +3,10 @@
 {% block page_title %}Home{% endblock page_title %}
 
 {% block content %}
-  <div>
-    <div>
+  <div class="flex flex-col items-center justify-items-center">
+    <div class="w-10/12">
       {% include 'mixins/room_card.html' with rooms=rooms %}
-      <div>
+      <div class="flex justify-center mt-20 itmes-center">
         {% include 'mixins/page_number.html' with page=page_obj %}
       </div>
     </div>

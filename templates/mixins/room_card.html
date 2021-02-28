@@ -1,28 +1,28 @@
-<ul>
+<ul class="grid grid-cols-4 grid-rows-2-300px auto-rows-300px gap-4 gap-y-6">
   {% for room in rooms %}
-    <li>
+    <li class="w-full relative">
       <a href="#">
-        <div style="background-image:url('{{room.get_first_photo}}')">
-        picture
-          <div>
+        <div class="rounded-lg bg-cover bg-center h-3/4 mb-2" style="background-image:url('{{room.get_first_photo}}')">
+          <div class="flex items-center relative top-4 {% if room.host.superhost %}justify-between{% else %}justify-end{% endif %}">
             {% if room.host.superhost %}
-              <span>Superhost</span>
+              <span class="bg-white p-2 ml-3 rounded-lg font-semibold justify-start">Superhost</span>
             {% endif %}
+            
           </div>
         </div>
-        <div>
-          <div>
-            <i class="fas fa-star"></i>
-            <span>{{room.get_review_points}}</span>
-            <span>({{room.reviews.count}})</span>
+        <div class="h-1/4">
+          <div class="mb-1">
+            <i class="fas fa-star text-red-500"></i>
+            <span class="review-points">{{room.get_review_points}}</span>
+            <span class="text-gray-400">({{room.reviews.count}})</span>
           </div>
-          <div>
+          <div class="truncate">
             {{room.country}} &bull; {{room.address}}
           </div>
         </div>
       </a>
-      <a href="#">
-        <i class="far fa-heart"></i>
+      <a href="#" class="mr-3 absolute top-5 right-2">
+        <i class="far fa-heart  text-2xl text-white justify-end text-center"></i>
       </a>
     </li>
   {% endfor %}
