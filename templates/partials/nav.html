@@ -8,7 +8,7 @@
     </li>
   {% else %}
     <li class="nav_link">
-      <a href="#">Log In</a>
+      <a href="{% url 'users:login' %}">Log In</a>
     </li>
     <li class="nav_link">
       <a href="{% url 'users:signup' %}">Sign Up</a>

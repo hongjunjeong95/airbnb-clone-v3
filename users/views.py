@@ -1,7 +1,7 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.views.generic import FormView
 from django.db.utils import IntegrityError
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect, reverse, render
 from django.urls import reverse_lazy
 from . import forms
 
@@ -21,3 +21,16 @@ class SignUpView(FormView):
         except IntegrityError as error:
             print(error)
             return redirect(reverse("users:signup"))
+
+
+def loginView(request):
+    if request.method == "GET":
+        return render(request, "pages/users/login.html")
+    elif request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        user = authenticate(request, username=email, password=password)
+        if user is None:
+            return redirect(reverse("users:login"))
+        login(request, user)
+        return redirect(reverse("core:home"))
