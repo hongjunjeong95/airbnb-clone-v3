@@ -1,23 +1,23 @@
-from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import authenticate
+from django.views.generic import FormView
+from django.db.utils import IntegrityError
+from django.shortcuts import redirect, reverse
+from django.urls import reverse_lazy
 from . import forms
 
 
-def signUp(request):
-    if request.method == "GET":
-        form = forms.SignUpForm
-        return render(request, "pages/users/signup.html", {"form": form})
-    elif request.method == "POST":
-        form = forms.SignUpForm(request.POST)
+class SignUpView(FormView):
+    form_class = forms.SignUpForm
+    success_url = reverse_lazy("core:home")
+    template_name = "pages/users/signup.html"
 
-        if form.is_valid():
+    def form_valid(self, form):
+        try:
             form.save()
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
-            user = authenticate(request, username=email, password=password)
-            user.avatar = request.FILES.get("avatar")
-            user.save()
-            return redirect(reverse("core:home"))
-        else:
-            print(form.errors)
+            authenticate(self.request, username=email, password=password)
+            return super().form_valid(form)
+        except IntegrityError as error:
+            print(error)
             return redirect(reverse("users:signup"))
