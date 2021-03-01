@@ -9,63 +9,46 @@
 <div></div>
 {% endblock search-bar %}
 
-
 {% block content %}
   <div class="background">
     <div class="wrap">
       <form action="{% url 'users:signup' %}" method="post" class="form" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form_input rounded-tl-lg rounded-tr-lg">
-          <input type="text" placeholder="First name" required class="w-full" name="first_name">
+          {{form.first_name}}
         </div>
         <div class="form_input">
-          <input type="text" placeholder="Last name" required class="w-full" name="last_name">
+          {{form.last_name}}
         </div>
         <div class="form_input">
-          <input type="email" placeholder="Email" required class="w-full" name="email">
+          {{form.email}}
         </div>
         <div class="form_input">
-          <input type="password" placeholder="Password" required class="w-full" name="password">
+          {{form.password}}
         </div>
         <div class="form_input">
-          <input type="password" placeholder="Confirm password" required class="w-full" name="password1">
+          {{form.password1}}
+        </div>
+
+
+        <div class="form_input">
+          <label for="{{form.avatar.id_for_label}}" class="text-lg font-bold">Avatar</label>
+          {{form.avatar}}
         </div>
         <div class="form_input">
-          <label for="id_avatar" class="text-lg font-bold">Avatar</label>
-          <input type="file" name="avatar" accept="image/*" id="id_avatar">
-        </div>
-        <div class="form_input">
-          <textarea name="bio" cols="40" rows="10" placeholder="Bio" class="resize-none" id="id_bio"></textarea>
+          {{form.bio}}
         </div>
         <div class="select">
-          <label for="id_gender">Gender:</label>
-          <select name="gender" id="gender">
-            {% for key, value in genders %}
-              <option value="{{value}}">
-                {{value}}
-              </option>
-            {% endfor %}
-          </select>
+          <label for="{{form.gender.id_for_label}}">Gender:</label>
+          {{form.gender}}
         </div>
         <div class="select">
           <label for="{{form.language.id_for_label}}">Language:</label>
-          <select name="language" id="language">
-            {% for key, value in languages %}
-              <option value="{{value}}">
-                {{value}}
-              </option>
-            {% endfor %}
-          </select>
+          {{form.language}}
         </div>
         <div class="select">
           <label for="{{form.currency.id_for_label}}">Currency:</label>
-          <select name="currency" id="currency">
-            {% for key, value in currencies %}
-              <option value="{{value}}">
-                {{value}}
-              </option>
-            {% endfor %}
-          </select>
+          {{form.currency}}
         </div>        
         <div class="birthdate rounded-br-xl rounded-bl-lg">
           <label for="birthdate">Birthdate:</label>
@@ -73,7 +56,7 @@
         </div>
         <button class="form_button">Submit</button>
       </form>
-      
     </div>
   </div>
 {% endblock content %}
+  
