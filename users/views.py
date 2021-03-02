@@ -1,12 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.views.generic import FormView
 from django.db.utils import IntegrityError
-from django.shortcuts import redirect, reverse, render
+from django.shortcuts import redirect, reverse
 from django.urls import reverse_lazy
-from . import forms
+from . import forms, mixins
 
 
-class SignUpView(FormView):
+class SignUpView(mixins.LoggedOutOnlyView, FormView):
 
     """ Sign Up View """
 
@@ -26,7 +27,7 @@ class SignUpView(FormView):
             return redirect(reverse("users:signup"))
 
 
-class LoginView(FormView):
+class LoginView(mixins.LoggedOutOnlyView, FormView):
 
     """ Login View """
 
@@ -44,6 +45,7 @@ class LoginView(FormView):
         return super().form_valid(form)
 
 
+@login_required
 def log_out(request):
     if request.user.is_authenticated:
         logout(request)
