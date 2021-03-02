@@ -83,4 +83,39 @@
   @apply mt-3 px-1 py-2 bg-green-500 text-white rounded-lg text-base font-bold tracking-wider w-full outline-none border-none;
 }
 
+.message {
+  animation: messageFadeIn 2s ease-in-out forwards;
+  &.error {
+    @apply bg-red-600;
+  }
+  &.success {
+    @apply bg-blue-500;
+  }
+  &.info {
+    @apply bg-green-500;
+  }
+  &.warning {
+    @apply bg-yellow-400;
+  }
+}
+
+@keyframes messageFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  5% {
+    opacity: 1;
+    transform: translateY(50px);
+  }
+  95% {
+    opacity: 1;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+}
+
 @tailwind utilities;

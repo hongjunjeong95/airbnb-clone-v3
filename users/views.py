@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.views.generic import FormView
 from django.db.utils import IntegrityError
 from django.shortcuts import redirect, reverse
@@ -20,10 +21,11 @@ class SignUpView(mixins.LoggedOutOnlyView, FormView):
             form.save()
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
-            authenticate(self.request, username=email, password=password)
+            user = authenticate(self.request, username=email, password=password)
+            messages.success(self.request, f"{user.first_name} signed up")
             return super().form_valid(form)
-        except IntegrityError as error:
-            print(error)
+        except IntegrityError:
+            messages.error(self.request, "User already exists")
             return redirect(reverse("users:signup"))
 
 
@@ -41,14 +43,13 @@ class LoginView(mixins.LoggedOutOnlyView, FormView):
         user = authenticate(self.request, username=email, password=password)
         if user is None:
             return redirect(reverse("users:login"))
+        messages.success(self.request, f"{user.first_name} logged in")
         login(self.request, user)
         return super().form_valid(form)
 
 
 @login_required
 def log_out(request):
-    if request.user.is_authenticated:
-        logout(request)
-        return redirect(reverse("core:home"))
-    else:
-        return redirect(reverse("users:login"))
+    messages.info(request, f"See you later {request.user.first_name}")
+    logout(request)
+    return redirect(reverse("core:home"))
