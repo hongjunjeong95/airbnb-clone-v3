@@ -26,17 +26,19 @@ class SignUpView(FormView):
             return redirect(reverse("users:signup"))
 
 
-def loginView(request):
-    if request.method == "GET":
-        form = forms.LoginForm
-    elif request.method == "POST":
-        form = forms.LoginForm(request.POST)
-        if form.is_valid():
-            email = request.POST.get("email")
-            password = request.POST.get("password")
-            user = authenticate(request, username=email, password=password)
-            if user is None:
-                return redirect(reverse("users:login"))
-            login(request, user)
-            return redirect(reverse("core:home"))
-    return render(request, "pages/users/login.html", {"form": form})
+class LoginView(FormView):
+
+    """ Login View """
+
+    form_class = forms.LoginForm
+    success_url = reverse_lazy("core:home")
+    template_name = "pages/users/login.html"
+
+    def form_valid(self, form):
+        email = form.cleaned_data.get("email")
+        password = form.cleaned_data.get("password")
+        user = authenticate(self.request, username=email, password=password)
+        if user is None:
+            return redirect(reverse("users:login"))
+        login(self.request, user)
+        return super().form_valid(form)
