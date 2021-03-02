@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.views.generic import FormView
 from django.db.utils import IntegrityError
 from django.shortcuts import redirect, reverse, render
@@ -42,3 +42,11 @@ class LoginView(FormView):
             return redirect(reverse("users:login"))
         login(self.request, user)
         return super().form_valid(form)
+
+
+def log_out(request):
+    if request.user.is_authenticated:
+        logout(request)
+        return redirect(reverse("core:home"))
+    else:
+        return redirect(reverse("users:login"))
