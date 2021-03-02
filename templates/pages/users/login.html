@@ -14,15 +14,15 @@
       <form action="{% url 'users:login' %}" method="post" class="form">
         {% csrf_token %}
         <div class="form_input rounded-tl-lg rounded-tr-lg">
-          <input type="email" name="email" placeholder="Email" required class="w-full" maxlength="254" id="id_email">
+          {{form.email.errors}}
+          {{form.email}}
         </div>
         <div class="form_input rounded-bl-lg rounded-br-lg">
-          <input type="password" name="password" placeholder="Password" required id="id_password">
+          {{form.password.errors}}
+          {{form.password}}
         </div>
         <button class="form_button">Submit</button>
       </form>
-      
     </div>
   </div>
 {% endblock content %}
-  

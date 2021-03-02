@@ -7,6 +7,9 @@ from . import forms
 
 
 class SignUpView(FormView):
+
+    """ Sign Up View """
+
     form_class = forms.SignUpForm
     success_url = reverse_lazy("core:home")
     template_name = "pages/users/signup.html"
@@ -25,12 +28,15 @@ class SignUpView(FormView):
 
 def loginView(request):
     if request.method == "GET":
-        return render(request, "pages/users/login.html")
+        form = forms.LoginForm
     elif request.method == "POST":
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-        user = authenticate(request, username=email, password=password)
-        if user is None:
-            return redirect(reverse("users:login"))
-        login(request, user)
-        return redirect(reverse("core:home"))
+        form = forms.LoginForm(request.POST)
+        if form.is_valid():
+            email = request.POST.get("email")
+            password = request.POST.get("password")
+            user = authenticate(request, username=email, password=password)
+            if user is None:
+                return redirect(reverse("users:login"))
+            login(request, user)
+            return redirect(reverse("core:home"))
+    return render(request, "pages/users/login.html", {"form": form})
