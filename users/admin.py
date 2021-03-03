@@ -18,6 +18,7 @@ class CustomUserAdmin(UserAdmin):
         "currency",
         "birthdate",
         "superhost",
+        "login_method",
         "is_active",
         "is_staff",
         "is_superuser",
@@ -28,6 +29,7 @@ class CustomUserAdmin(UserAdmin):
         "language",
         "currency",
         "superhost",
+        "login_method",
     )
 
     fieldsets = UserAdmin.fieldsets + (
@@ -42,6 +44,7 @@ class CustomUserAdmin(UserAdmin):
                     "currency",
                     "birthdate",
                     "superhost",
+                    "login_method",
                 )
             },
         ),
