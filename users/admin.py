@@ -22,6 +22,7 @@ class CustomUserAdmin(UserAdmin):
         "is_active",
         "is_staff",
         "is_superuser",
+        "email_verified",
     )
 
     list_filter = UserAdmin.list_filter + (
@@ -30,6 +31,7 @@ class CustomUserAdmin(UserAdmin):
         "currency",
         "superhost",
         "login_method",
+        "email_verified",
     )
 
     fieldsets = UserAdmin.fieldsets + (
@@ -45,6 +47,8 @@ class CustomUserAdmin(UserAdmin):
                     "birthdate",
                     "superhost",
                     "login_method",
+                    "email_verified",
+                    "email_secret",
                 )
             },
         ),

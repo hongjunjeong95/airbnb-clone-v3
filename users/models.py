@@ -1,6 +1,11 @@
+import uuid
 from django.contrib.auth.models import AbstractUser
+from django.core.mail import send_mail
 from django.db import models
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from . import managers
+from config import settings
 
 
 class User(AbstractUser):
@@ -37,8 +42,6 @@ class User(AbstractUser):
         (LOGIN_KAKAO, "Kakao"),
     )
 
-    objects = managers.CustomUserModelManager()
-
     avatar = models.ImageField(upload_to="avatars", blank=True)
     bio = models.TextField(blank=True)
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES, null=True)
@@ -49,3 +52,25 @@ class User(AbstractUser):
     login_method = models.CharField(
         max_length=6, choices=LOGIN_CHOICES, default=LOGIN_EMAIL
     )
+    email_verified = models.BooleanField(default=False)
+    email_secret = models.CharField(max_length=20, default="", blank=True)
+
+    objects = managers.CustomUserModelManager()
+
+    def verify_email(self):
+        if self.email_verified is False:
+            secret = uuid.uuid4().hex[:20]
+            self.email_secret = secret
+            html_message = render_to_string(
+                "email/verify_email.html", {"secret": secret}
+            )
+            send_mail(
+                "Verify Hairbnb Account",
+                strip_tags(html_message),
+                settings.EMAIL_FROM,
+                ["wjdghdwns0@gmail.com"],
+                html_message=html_message,
+            )
+
+            self.save()
+        return

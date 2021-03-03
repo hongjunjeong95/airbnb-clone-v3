@@ -19,4 +19,10 @@ urlpatterns = [
         name="kakao-callback",
     ),
     path("logout/", views.log_out, name="logout"),
+    path("email/check/", views.check_email, name="check-email"),
+    path(
+        "verify/<str:key>/",
+        views.complete_verification,
+        name="complete-verification",
+    ),
 ]

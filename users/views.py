@@ -7,10 +7,10 @@ from django.contrib import messages
 from django.core.files.base import ContentFile
 from django.views.generic import FormView
 from django.db.utils import IntegrityError
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect, reverse, render
 from django.urls import reverse_lazy
 from . import forms, mixins, models
-from .exception import SocialLoginException, GithubException, KakaoException
+from .exception import LoggedOutOnlyFunctionView, GithubException, KakaoException
 
 
 class SignUpView(mixins.LoggedOutOnlyView, FormView):
@@ -18,7 +18,7 @@ class SignUpView(mixins.LoggedOutOnlyView, FormView):
     """ Sign Up View """
 
     form_class = forms.SignUpForm
-    success_url = reverse_lazy("core:home")
+    success_url = reverse_lazy("users:check-email")
     template_name = "pages/users/signup.html"
 
     def form_valid(self, form):
@@ -27,6 +27,7 @@ class SignUpView(mixins.LoggedOutOnlyView, FormView):
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
             user = authenticate(self.request, username=email, password=password)
+            user.verify_email()
             messages.success(self.request, f"{user.first_name} signed up")
             return super().form_valid(form)
         except IntegrityError:
@@ -46,24 +47,25 @@ class LoginView(mixins.LoggedOutOnlyView, FormView):
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
         user = authenticate(self.request, username=email, password=password)
-        if user is None:
+        if user is not None and user.email_verified is True:
+            messages.success(self.request, f"{user.first_name} logged in")
+            login(self.request, user)
+        else:
             return redirect(reverse("users:login"))
-        messages.success(self.request, f"{user.first_name} logged in")
-        login(self.request, user)
         return super().form_valid(form)
 
 
 def github_login(request):
     try:
         if request.user.is_authenticated:
-            raise SocialLoginException("User already logged in")
+            raise LoggedOutOnlyFunctionView("User already logged in")
         client_id = os.environ.get("GH_ID")
         redirect_uri = "http://127.0.0.1:8000/users/login/github/callback/"
         scope = "read:user"
         return redirect(
             f"https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope={scope}"
         )
-    except SocialLoginException as error:
+    except LoggedOutOnlyFunctionView as error:
         messages.error(request, error)
         return redirect("core:home")
 
@@ -71,7 +73,7 @@ def github_login(request):
 def github_login_callback(request):
     try:
         if request.user.is_authenticated:
-            raise SocialLoginException("User already logged in")
+            raise LoggedOutOnlyFunctionView("User already logged in")
         code = request.GET.get("code", None)
         if code is None:
             raise GithubException("Can't get code")
@@ -144,7 +146,7 @@ def github_login_callback(request):
     except GithubException as error:
         messages.error(request, error)
         return redirect(reverse("core:home"))
-    except SocialLoginException as error:
+    except LoggedOutOnlyFunctionView as error:
         messages.error(request, error)
         return redirect(reverse("core:home"))
 
@@ -152,7 +154,7 @@ def github_login_callback(request):
 def kakao_login(request):
     try:
         if request.user.is_authenticated:
-            raise SocialLoginException("User already logged in")
+            raise LoggedOutOnlyFunctionView("User already logged in")
         client_id = os.environ.get("KAKAO_ID")
         redirect_uri = "http://127.0.0.1:8000/users/login/kakao/callback/"
 
@@ -162,7 +164,7 @@ def kakao_login(request):
     except KakaoException as error:
         messages.error(request, error)
         return redirect("core:home")
-    except SocialLoginException as error:
+    except LoggedOutOnlyFunctionView as error:
         messages.error(request, error)
         return redirect("core:home")
 
@@ -170,7 +172,7 @@ def kakao_login(request):
 def kakao_login_callback(request):
     try:
         if request.user.is_authenticated:
-            raise SocialLoginException("User already logged in")
+            raise LoggedOutOnlyFunctionView("User already logged in")
         code = request.GET.get("code", None)
         if code is None:
             KakaoException("Can't get code")
@@ -227,7 +229,7 @@ def kakao_login_callback(request):
     except KakaoException as error:
         messages.error(request, error)
         return redirect(reverse("core:home"))
-    except SocialLoginException as error:
+    except LoggedOutOnlyFunctionView as error:
         messages.error(request, error)
         return redirect(reverse("core:home"))
 
@@ -237,3 +239,26 @@ def log_out(request):
     messages.info(request, f"See you later {request.user.first_name}")
     logout(request)
     return redirect(reverse("core:home"))
+
+
+def check_email(request):
+    return render(request, "email/check_email.html")
+
+
+def complete_verification(request, key):
+    try:
+        if request.user.is_authenticated:
+            raise LoggedOutOnlyFunctionView("Please verify email first")
+        user = models.User.objects.get_or_none(email_secret=key)
+        if user is None:
+            messages.error(request, "User does not exist")
+            return redirect(reverse("core:home"))
+        user.email_verified = True
+        user.email_secret = ""
+        user.save()
+        login(request, user)
+        messages.success(request, f"{user.email} verification is completed")
+        return redirect(reverse("core:home"))
+    except LoggedOutOnlyFunctionView as error:
+        messages.error(request, error)
+        return redirect("core:home")
