@@ -118,4 +118,20 @@
   }
 }
 
+.social-login {
+  .button {
+    @apply rounded-lg text-base font-bold tracking-wider w-full outline-none;
+    a {
+      @apply block px-1 py-2;
+    }
+  }
+}
+
+.button {
+  @apply mt-3 bg-green-500 text-white rounded-lg text-base font-bold tracking-wider w-full outline-none border-none;
+  a {
+    @apply block px-1 py-2;
+  }
+}
+
 @tailwind utilities;
