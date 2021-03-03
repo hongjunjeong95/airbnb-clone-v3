@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from . import managers
 
 
 class User(AbstractUser):
@@ -35,6 +36,8 @@ class User(AbstractUser):
         (LOGIN_GITHUB, "Github"),
         (LOGIN_KAKAO, "Kakao"),
     )
+
+    objects = managers.CustomUserModelManager()
 
     avatar = models.ImageField(upload_to="avatars", blank=True)
     bio = models.TextField(blank=True)

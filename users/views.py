@@ -126,25 +126,25 @@ def github_login_callback(request):
         if bio is None:
             raise GithubException("Can't get bio from profile_request")
 
-        try:
-            user = models.User.objects.get(email=email)
-
+        user = models.User.objects.get_or_none(email=email)
+        if user is not None:
             if user.login_method != models.User.LOGIN_GITHUB:
                 raise GithubException(f"Please login with {user.login_method}")
-        except models.User.DoesNotExist:
+        else:
             user = models.User.objects.create(
                 username=email,
                 first_name=name,
                 email=email,
                 bio=bio,
                 login_method=models.User.LOGIN_GITHUB,
+                email_verified=True,
             )
             photo_request = requests.get(avatar_url)
 
             user.avatar.save(f"{name}-avatar", ContentFile(photo_request.content))
             user.set_unusable_password()
             user.save()
-            messages.success(request, f"{user.email} logged in with Github")
+        messages.success(request, f"{user.email} logged in with Github")
         login(request, user)
         return redirect(reverse("core:home"))
     except GithubException as error:
