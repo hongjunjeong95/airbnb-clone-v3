@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+
+{% block page_title %}
+  {{user_obj.first_name}}'s Profile
+{% endblock page_title %}
+
+{% block search-bar %}
+<div></div>
+{% endblock search-bar %}
+
+{% block content %}
+  <div class="grid grid-cols-3 items-center px-16 mb-20">
+    <div></div>
+    <div class="profile w-full">
+      <div class="profile__info">
+        <div class="mb-4">
+          {% include 'mixins/avatar.html' with user=user_obj %}
+        </div>
+        <div class="info">
+          <h4>First name</h4>
+          <span>{{user_obj.first_name|capfirst}}</span>
+        </div>
+        
+        {% if user_obj.last_name %}
+        <div class="info">
+          <h4>Last name</h4>
+          <span>{{user_obj.last_name|capfirst}}</span>
+        </div>
+        {% endif %}
+          
+        {% if user_obj.email %}
+        <div class="info">
+          <h4>Email</h4>
+          <span>{{user_obj.email}}</span>
+        </div>        
+        {% endif %}
+          
+      </div>
+      <div class="profile__info">
+        {% if user_obj.gender %}
+        <div class="info">
+          <h4>Gender</h4>
+          <span>{{user_obj.gender}}</span>
+        </div>
+        {% endif %}
+          
+        {% if user_obj.language %}
+        <div class="info">
+          <h4>Language</h4>
+          <span>{{user_obj.language}}</span>
+        </div>
+        {% endif %}
+          
+        {% if user_obj.currency %}
+        <div class="info">
+          <h4>Currency</h4>
+          <span>{{user_obj.currency}}</span>
+        </div>
+        {% endif %}
+          
+        {% if user_obj.birthdate %}
+        <div class="info">
+          <h4>Birthdate</h4>
+          <span>{{user_obj.birthdate}}</span>          
+        </div>
+        {% endif %}
+
+        {% if user_obj.superhost %}
+        <div class="info">
+          <h4>Superhost</h4>
+        </div>
+        {% endif %}
+        
+        {% if user_obj.bio %}
+          <div class="info flex-col mt-3">
+            <h4>Bio</h4>
+            <div class="text-justify line-clamp-6 w-full">&emsp;{{user_obj.bio}}</div>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if user_obj.pk == user.pk %}
+        <button class="button my-6 w-3/4">
+          <a href="#">Edit Profile</a>
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center justify-items-center">
+    <div class="w-10/12">
+        {% include 'mixins/room_card.html' with rooms=rooms %}
+        <div class="flex justify-center mt-20 itmes-center">
+        {% include 'mixins/page_number.html' with page=rooms %}
+      </div>
+    </div>
+  </div>
+{% endblock content %}

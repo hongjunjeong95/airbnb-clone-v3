@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.files.base import ContentFile
+from django.core.paginator import Paginator
 from django.views.generic import FormView
 from django.db.utils import IntegrityError
 from django.shortcuts import redirect, reverse, render
@@ -262,3 +263,23 @@ def complete_verification(request, key):
     except LoggedOutOnlyFunctionView as error:
         messages.error(request, error)
         return redirect("core:home")
+
+
+@login_required
+def userDetail(request, pk):
+    user_obj = models.User.objects.get_or_none(pk=pk)
+    if user_obj is None:
+        messages.error(request, "User does not exist")
+        return redirect(reverse("core:home"))
+
+    page = int(request.GET.get("page", 1))
+    page_sector = ((page - 1) // 5) * 5
+    qs = user_obj.rooms.all()
+    paginator = Paginator(qs, 12, orphans=6)
+    rooms = paginator.get_page(page)
+
+    return render(
+        request,
+        "pages/users/userDetail.html",
+        {"user_obj": user_obj, "page_sector": page_sector, "rooms": rooms},
+    )
