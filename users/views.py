@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.files.base import ContentFile
 from django.core.paginator import Paginator
-from django.views.generic import FormView
+from django.views.generic import FormView, DetailView
 from django.db.utils import IntegrityError
 from django.shortcuts import redirect, reverse, render
 from django.urls import reverse_lazy
@@ -274,6 +274,7 @@ def userDetail(request, pk):
 
     page = int(request.GET.get("page", 1))
     page_sector = ((page - 1) // 5) * 5
+
     qs = user_obj.rooms.all()
     paginator = Paginator(qs, 12, orphans=6)
     rooms = paginator.get_page(page)
@@ -283,3 +284,27 @@ def userDetail(request, pk):
         "pages/users/userDetail.html",
         {"user_obj": user_obj, "page_sector": page_sector, "rooms": rooms},
     )
+
+
+class UserProfileView(mixins.LoginOnlyView, DetailView):
+
+    """ User Profile View """
+
+    model = models.User
+    context_object_name = "user_obj"
+    template_name = "pages/users/userDetail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+
+        page = int(self.request.GET.get("page", 1))
+        page_sector = ((page - 1) // 5) * 5
+
+        user_obj = context["user_obj"]
+        qs = user_obj.rooms.all()
+        paginator = Paginator(qs, 12, orphans=6)
+        rooms = paginator.get_page(page)
+
+        context["page_sector"] = page_sector
+        context["rooms"] = rooms
+        return context
