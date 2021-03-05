@@ -8,3 +8,7 @@ class KakaoException(Exception):
 
 class LoggedOutOnlyFunctionView(Exception):
     pass
+
+
+class VerifyUser(Exception):
+    pass

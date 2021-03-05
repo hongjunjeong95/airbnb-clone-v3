@@ -11,7 +11,12 @@ from django.db.utils import IntegrityError
 from django.shortcuts import redirect, reverse, render
 from django.urls import reverse_lazy
 from . import forms, mixins, models
-from .exception import LoggedOutOnlyFunctionView, GithubException, KakaoException
+from .exception import (
+    LoggedOutOnlyFunctionView,
+    GithubException,
+    KakaoException,
+    VerifyUser,
+)
 
 
 class SignUpView(mixins.LoggedOutOnlyView, FormView):
@@ -308,3 +313,94 @@ class UserProfileView(mixins.LoginOnlyView, DetailView):
         context["page_sector"] = page_sector
         context["rooms"] = rooms
         return context
+
+
+@login_required
+def updateProfile(request, pk):
+    if request.method == "GET":
+        try:
+            if request.user.pk != pk:
+                raise VerifyUser("Page Not found")
+
+            user = models.User.objects.get_or_none(pk=pk)
+            if user is None:
+                messages.error(request, "User does not exist")
+                return redirect(reverse("core:home"))
+            genders = models.User.GENDER_CHOICES
+            languages = models.User.LANGUAGE_CHOICES
+            currencies = models.User.CURRENCY_CHOICES
+            login_methods = models.User.LOGIN_CHOICES
+
+            choices = {
+                "genders": genders,
+                "languages": languages,
+                "currencies": currencies,
+                "login_methods": login_methods,
+            }
+
+            return render(
+                request,
+                "pages/users/update_profile.html",
+                context={"user": user, **choices},
+            )
+        except VerifyUser as error:
+            messages.error(request, error)
+            return redirect("core:home")
+        return render(request, "pages/users/update_profile.html", {"user": user})
+    elif request.method == "POST":
+        try:
+            if request.user.pk != pk:
+                raise VerifyUser("Page Not found")
+
+            user = models.User.objects.get_or_none(pk=pk)
+            if user is None:
+                messages.error(request, "User does not exist")
+                return redirect(reverse("core:home"))
+
+            avatar = request.FILES.get("avatar")
+            if avatar is not None and avatar != "":
+                user.avatar = avatar
+
+            first_name = request.POST.get("first_name")
+            if first_name is not None:
+                user.first_name = first_name
+
+            last_name = request.POST.get("last_name")
+            if last_name is not None:
+                user.last_name = last_name
+
+            email = request.POST.get("email")
+            if email is not None:
+                user.email = email
+
+            gender = request.POST.get("gender")
+            if gender is not None:
+                user.gender = gender
+
+            language = request.POST.get("language")
+            if language is not None:
+                user.language = language
+
+            currency = request.POST.get("currency")
+            if currency is not None:
+                user.currency = currency
+
+            birthdate = request.POST.get("birthdate")
+
+            if birthdate is not None:
+                user.birthdate = birthdate
+
+            superhost = bool(request.POST.get("superhost"))
+            if superhost is not None:
+                user.superhost = superhost
+
+            bio = request.POST.get("bio")
+            if bio is not None:
+                user.bio = bio
+
+            user.save()
+            messages.success(request, f"{user.email} profile update succeded")
+            return redirect(reverse("users:profile", kwargs={"pk": pk}))
+        except VerifyUser as error:
+            messages.error(request, error)
+            return redirect("core:home")
