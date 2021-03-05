@@ -77,7 +77,7 @@ class SignUpForm(forms.ModelForm):
 
 
 class LoginForm(forms.ModelForm):
-    
+
     """ Login Form """
 
     class Meta:

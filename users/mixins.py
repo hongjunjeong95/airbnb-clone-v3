@@ -18,3 +18,15 @@ class LoggedOutOnlyView(UserPassesTestMixin):
     def handle_no_permission(self):
         messages.error(self.request, "Can't go there")
         return redirect(reverse("core:home"))
+
+
+class EmailLoginOnlyView(UserPassesTestMixin):
+
+    permission_denied_message = "Page Not Found"
+
+    def test_func(self):
+        return self.request.user.login_method == "email"
+
+    def handle_no_permission(self):
+        messages.error(self.request, "Can't go there")
+        return redirect(reverse("core:home"))
