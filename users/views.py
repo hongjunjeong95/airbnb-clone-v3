@@ -3,6 +3,8 @@ import requests
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.core.files.base import ContentFile
 from django.core.paginator import Paginator
@@ -402,3 +404,26 @@ def change_password(request, pk):
         except EmailLoggedInOnly as error:
             messages.error(request, error)
             return redirect("core:home")
+
+
+class ChangePasswordView(
+    mixins.LoginOnlyView,
+    mixins.EmailLoginOnlyView,
+    SuccessMessageMixin,
+    PasswordChangeView,
+):
+    template_name = "pages/users/change_password.html"
+    success_message = "Password changed"
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=form_class)
+        form.fields["old_password"].widget.attrs = {"placeholder": "Old password"}
+        form.error_messages["password_mismatch"] = "The two password didn't match"
+        form.fields["new_password1"].widget.attrs = {"placeholder": "New password"}
+        form.fields["new_password2"].widget.attrs = {
+            "placeholder": "Verify your new password"
+        }
+        return form
+
+    def get_success_url(self):
+        return self.request.user.get_absolute_url()

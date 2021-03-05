@@ -31,5 +31,9 @@ urlpatterns = [
         views.UpdateProfileView.as_view(),
         name="update-profile",
     ),
-    path("<int:pk>/change-password/", views.change_password, name="change-password"),
+    path(
+        "<int:pk>/change-password/",
+        views.ChangePasswordView.as_view(),
+        name="change-password",
+    ),
 ]
