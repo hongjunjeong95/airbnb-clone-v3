@@ -16,6 +16,7 @@ from .exception import (
     GithubException,
     KakaoException,
     VerifyUser,
+    ChangePasswordException,
 )
 
 
@@ -315,7 +316,7 @@ class UserProfileView(mixins.LoginOnlyView, DetailView):
         return context
 
 
-class UpdateProfileView(mixins.LoginOnlyView, mixins.EmailLoginOnlyView, UpdateView):
+class UpdateProfileView(mixins.LoginOnlyView, UpdateView):
     model = models.User
     fields = {
         "avatar",
@@ -339,3 +340,65 @@ class UpdateProfileView(mixins.LoginOnlyView, mixins.EmailLoginOnlyView, UpdateV
         form.fields["last_name"].widget.attrs = {"placeholder": "Last name"}
         form.fields["bio"].widget.attrs = {"placeholder": "Bio"}
         return form
+
+
+class EmailLoggedInOnly(Exception):
+    pass
+
+
+@login_required
+def change_password(request, pk):
+    if request.method == "GET":
+        try:
+            if request.user.login_method != "email":
+                raise EmailLoggedInOnly("Page not found 404")
+            if request.user.pk != pk:
+                raise VerifyUser("Page Not found 404")
+            user = models.User.objects.get_or_none(pk=pk)
+            if user is None:
+                messages.error(request, "User does not exist")
+                return redirect(reverse("core:home"))
+            return render(
+                request,
+                "pages/users/change_password.html",
+                context={"user": user},
+            )
+        except VerifyUser as error:
+            messages.error(request, error)
+            return redirect("core:home")
+        except EmailLoggedInOnly as error:
+            messages.error(request, error)
+            return redirect("core:home")
+    elif request.method == "POST":
+        try:
+            if request.user.login_method != "email":
+                raise EmailLoggedInOnly("Page not found 404")
+            if request.user.pk != pk:
+                raise VerifyUser("Page Not found 404")
+            user = models.User.objects.get_or_none(pk=pk)
+            if user is None:
+                messages.error(request, "User does not exist")
+                return redirect(reverse("core:home"))
+            old_password = request.POST.get("current_password")
+            new_password = request.POST.get("new_password")
+            new_password1 = request.POST.get("verify_password")
+            user = authenticate(request, username=user.email, password=old_password)
+            if user is None:
+                raise ChangePasswordException("Current password is wrong!")
+
+            if new_password != new_password1:
+                raise ChangePasswordException("New password doesn't match")
+            user.set_password(new_password)
+            user.save()
+            messages.success(request, f"{user.email}'password changed successfully")
+            login(request, user)
+            return redirect(reverse("users:profile", kwargs={"pk": pk}))
+        except ChangePasswordException as error:
+            messages.error(request, error)
+            return redirect(reverse("core:home"))
+        except VerifyUser as error:
+            messages.error(request, error)
+            return redirect("core:home")
+        except EmailLoggedInOnly as error:
+            messages.error(request, error)
+            return redirect("core:home")

@@ -81,7 +81,7 @@
       </form>
       {% if user.login_method == 'email' %}
         <button class="button bg-red-500">
-          <a href="#">Change Password</a>
+          <a href="{% url 'users:change-password' user.pk %}">Change Password</a>
         </button>
       {% endif %}
       <button class="button bg-gray-700">

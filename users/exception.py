@@ -12,3 +12,7 @@ class LoggedOutOnlyFunctionView(Exception):
 
 class VerifyUser(Exception):
     pass
+
+
+class ChangePasswordException(Exception):
+    pass
