@@ -1,6 +1,22 @@
 <ul class="flex place-self-end">
   {% if user.is_authenticated %}
     <li class="nav_link">
+      {% if request.session.is_hosting %}
+        <a href="#">Create Room</a>
+      {% else %}
+        <a href="#">Reserved Rooms</a>
+      {% endif %}
+    </li>
+    <li class="nav_link">
+      <a href="{% url 'users:switch-hosting' %}">
+        {% if request.session.is_hosting %}
+          Stop Hosting
+        {% else %}
+          Start Hosting
+        {% endif %}
+      </a>
+    </li>
+    <li class="nav_link">
       <a href="{% url 'users:profile' user.pk %}">Profile</a>
     </li>
     <li class="nav_link">

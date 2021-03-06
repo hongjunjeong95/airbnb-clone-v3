@@ -36,4 +36,5 @@ urlpatterns = [
         views.ChangePasswordView.as_view(),
         name="change-password",
     ),
+    path("switch-hosting/", views.switch_hosting, name="switch-hosting"),
 ]

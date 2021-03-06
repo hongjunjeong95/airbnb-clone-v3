@@ -427,3 +427,11 @@ class ChangePasswordView(
 
     def get_success_url(self):
         return self.request.user.get_absolute_url()
+
+
+def switch_hosting(request):
+    try:
+        del request.session["is_hosting"]
+    except KeyError:
+        request.session["is_hosting"] = True
+    return redirect(reverse("core:home"))
