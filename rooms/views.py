@@ -1,4 +1,4 @@
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.shortcuts import render, redirect, reverse
 from django.contrib import messages
 from . import models
@@ -21,15 +21,13 @@ class HomeView(ListView):
         return context
 
 
-def roomDetail(request, pk):
-    room = models.Room.objects.get(pk=pk)
-    if room is None:
-        messages.error(request, "Room does not exsit")
-        return redirect(reverse("core:home"))
-    month = room.host.date_joined.strftime("%b")
+class RoomDetailView(DetailView):
+    model = models.Room
+    template_name = "pages/rooms/room_detail.html"
 
-    return render(
-        request,
-        "pages/rooms/room_detail.html",
-        context={"room": room, "joined_month": month},
-    )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        room = context["room"]
+        month = room.host.date_joined.strftime("%b")
+        context["joined_month"] = month
+        return context
