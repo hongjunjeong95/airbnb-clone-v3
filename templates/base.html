@@ -1,4 +1,4 @@
-{% load static %}
+{% load static i18n %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -24,7 +24,7 @@
           <form>
             <input 
             type="text"
-            placeholder="Searching By City"
+            placeholder="{% trans 'Searching By City' %}"
             name="city" 
             class="shadow border-none outline-none px-8 py-3 rounded-3xl w-full border-gray-500 border"
             >
@@ -35,5 +35,5 @@
     </header>
     {% block content %}{% endblock content %}
     {% include 'partials/footer.html' %}
-  </body>
+    <script src="{% static 'js/main.js' %}"></script>
 </html>

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% load remainder_op %}
+{% load remainder_op i18n %}
 
 {% block page_title %}
     {{room.name}}
@@ -18,7 +18,7 @@
                     <span class="mx-1">&centerdot;</span>
                 </div>
                 {% if room.host.superhost %}
-                    <span class="ml-1">Superhost</span>
+                    <span class="ml-1">{% trans "Superhost" %}</span>
                     <span class="mx-2">&centerdot;</span>
                 {% endif %}
                 <div class="font-medium">
@@ -42,17 +42,17 @@
                 <div class="w-3/5">
                     <div class="section pb-0 flex justify-between">
                         <div class="space__left">
-                            <h2 class="text-2xl font-bold">{{room.room_type}} hosted by {{room.host.first_name}}</h2>
+                            <h2 class="text-2xl font-bold">{% blocktrans with room_type=room.room_type first_name=room.host.first_name  %}{{room_type}} hosted by {{first_name}}{% endblocktrans %}</h2>
                             <div class="mb-4">
-                                <span>Maximum</span>
-                                <span>{{room.guests}} guests &centerdot;</span>
-                                <span>{{room.beds}} beds &centerdot;</span>
-                                <span>{{room.bedrooms}} bedrooms &centerdot;</span>
-                                <span>{{room.bathrooms}} bathrooms</span>
+                                <span>{% trans "Maximum" %}</span>
+                                <span>{% blocktrans with guests=room.guests%}{{guests}} guests{% endblocktrans %} &centerdot;</span>
+                                <span>{% blocktrans with beds=room.beds %}{{beds}} beds{% endblocktrans %} &centerdot;</span>
+                                <span>{% blocktrans with bedrooms=room.bedrooms %}{{bedrooms}} bedrooms{% endblocktrans %} &centerdot;</span>
+                                <span>{% blocktrans with bathrooms=room.bathrooms %}{{bathrooms}} bathrooms{% endblocktrans %}</span>
                             </div>
                             {% if user.pk == room.host.pk and request.session.is_hosting %}
                                 <button class="button">
-                                <a href="{% url 'rooms:edit-room' room.pk %}">Edit Room</a>
+                                <a href="#">{% trans "Edit Room" %}</a>
                                 </button>
                             {% endif %}
                         </div>
@@ -64,7 +64,7 @@
                         <p class="content">&emsp;{{room.description}}</p>
                     </div>
                     <div class="section">
-                        <h4>Amenity</h4>
+                        <h4>{% trans "Amenity" %}</h4>
                         <ul>
                         {% for amenity in room.amenities.all %}
                             <li>{{amenity}}</li>
@@ -72,7 +72,7 @@
                         </ul>
                     </div>
                     <div class="section">
-                        <h4>Facility</h4>
+                        <h4>{% trans "Facility" %}</h4>
                         <ul>
                         {% for facility in room.facilities.all %}
                             <li>{{facility}}</li>
@@ -80,7 +80,7 @@
                         </ul>
                     </div>
                     <div class="section">
-                        <h4>House Rules</h4>
+                        <h4>{% trans "House Rules" %}</h4>
                         <ul>
                         {% for house_rule in room.house_rules.all %}
                             <li>{{house_rule}}</li>
@@ -98,32 +98,32 @@
             <div class="room_reviews">
                 <div class="text-lg font-bold mb-8">
                     <i class="fas fa-star text-red-500"></i>
-                    <span>{{room.get_review_points}} points</span>
-                    <span>({{room.reviews.count}} review{{room.reviews.count|pluralize}})</span>
+                    <span>{{room.get_review_points}} {% trans "points" %}</span>
+                    <span>({% blocktrans with count=room.reviews.count %}{{count}} review{% endblocktrans %}{{room.reviews.count|pluralize}})</span>
                 </div>
                 <div class="review_points">
                     <div>
-                        <span>Accuracy</span>
+                        <span>{% trans "Accuracy" %}</span>
                         <span class="point">{{room.calculate_accuracy}}</span>
                     </div>
                     <div>
-                        <span>Communication</span>
+                        <span>{% trans "Communication" %}</span>
                         <span class="point">{{room.calculate_communication}}</span>
                     </div>
                     <div>
-                        <span>Cleanliness</span>
+                        <span>{% trans "Cleanliness" %}</span>
                         <span class="point">{{room.calculate_cleanliness}}</span>
                     </div>
                     <div>
-                        <span>Location</span>
+                        <span>{% trans "Location" %}</span>
                         <span class="point">{{room.calculate_location}}</span>
                     </div>
                     <div>
-                        <span>Check In</span>
+                        <span>{% trans "Check In" %}</span>
                         <span class="point">{{room.calculate_check_in}}</span>
                     </div>
                     <div>
-                        <span>Value</span>
+                        <span>{% trans "Value" %}</span>
                         <span class="point">{{room.calculate_value}}</span>
                     </div>
                 </div>
@@ -164,8 +164,8 @@
                         </a>
                         {% endif %}
                         <div class="flex flex-col">
-                            <h3 class="font-bold text-2xl">Host : {{room.host.first_name}}</h3>
-                            <span class="text-sm text-gray-400">Member Since: {{joined_month}}, {{room.host.date_joined.year}}</span>
+                            <h3 class="font-bold text-2xl">{% trans "Host" %} : {{room.host.first_name}}</h3>
+                            <span class="text-sm text-gray-400">{% blocktrans with joined_month=joined_month year=room.host.date_joined.year %}Member Since: {{joined_month}}, {{year}}{% endblocktrans %}</span>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
@@ -173,12 +173,12 @@
                             <div class="flex text-base mb-8">
                                 <div class="host-info__reviews mr-4">
                                     <i class="fas fa-star text-red-500 mr-2"></i>
-                                    <span>{{room.reviews.count}} review{{room.reviews.count|pluralize}}</span>
+                                    <span>{% blocktrans with count=room.reviews.count %}{{count}} review{% endblocktrans %}{{count|pluralize}}</span>
                                 </div>
                                 <div class="host-info__superhost">
                                     {% if room.host.superhost %}
                                         <i class="fas fa-medal text-red-500 mr-2"></i>
-                                        <span>Superhost</span>
+                                        <span>{% trans "Superhost" %}</span>
                                     {% endif %}
                                 </div>
                             </div>
@@ -186,18 +186,18 @@
                                 {{room.description}}
                             </p>
                             {% if room.host.superhost %}
-                                <h3 class="font-bold text-base mb-2">{{room.host.first_name}} is superhost.</h3>
+                                <h3 class="font-bold text-base mb-2">{% blocktrans with first_name=room.host.first_name %}{{first_name}} is superhost.{% endblocktrans %}</h3>
                                 <p>
-                                    Superhost is a host who boasts rich experience and
-                                    high rating and do their best to make their guests comfortable in their accommodation.
+                                    {% trans "Superhost is a host who boasts rich experience and
+                                    high rating and do their best to make their guests comfortable in their accommodation." %}
                                 </p>
                             {% endif %}
                         </div>
                         <div class="flex flex-col">
-                            <span class="mb-4">Response rate : 100%</span>
-                            <span class="mb-6">Response time : In one hour</span>
+                            <span class="mb-4">{% trans "Response rate" %} : 100%</span>
+                            <span class="mb-6">{% trans "Response time : In one hour" %}</span>
                             <button class="button px-1 py-2 w-1/2">
-                                <a href="#">Contact the host</a>
+                                <a href="#">{% trans "Contact the host" %}</a>
                             </button>
                         </div>
                     </div>

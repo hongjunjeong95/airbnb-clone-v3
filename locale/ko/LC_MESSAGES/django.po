@@ -1,0 +1,207 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-07 19:11+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: .\templates\base.html:27
+msgid "Searching By City"
+msgstr "도시로 찾기"
+
+#: .\templates\pages\rooms\room_detail.html:21
+#: .\templates\pages\rooms\room_detail.html:181
+msgid "Superhost"
+msgstr "슈퍼호스트"
+
+#: .\templates\pages\rooms\room_detail.html:45
+#, python-format
+msgid "%(room_type)s hosted by %(first_name)s"
+msgstr "%(first_name)s에 의해 호스트 된 %(room_type)s"
+
+#: .\templates\pages\rooms\room_detail.html:47
+msgid "Maximum"
+msgstr "최대"
+
+#: .\templates\pages\rooms\room_detail.html:48
+#, python-format
+msgid "%(guests)s guests"
+msgstr "게스트 %(guests)s명"
+
+#: .\templates\pages\rooms\room_detail.html:49
+#, python-format
+msgid "%(beds)s beds"
+msgstr "침구 %(beds)s개"
+
+#: .\templates\pages\rooms\room_detail.html:50
+#, python-format
+msgid "%(bedrooms)s bedrooms"
+msgstr "침실 %(bedrooms)s"
+
+#: .\templates\pages\rooms\room_detail.html:51
+#, python-format
+msgid "%(bathrooms)s bathrooms"
+msgstr "욕실 %(bathrooms)s개"
+
+#: .\templates\pages\rooms\room_detail.html:55
+msgid "Edit Room"
+msgstr "방 수정하기"
+
+#: .\templates\pages\rooms\room_detail.html:67
+msgid "Amenity"
+msgstr "어메니티"
+
+#: .\templates\pages\rooms\room_detail.html:75
+msgid "Facility"
+msgstr "편의시설"
+
+#: .\templates\pages\rooms\room_detail.html:83
+msgid "House Rules"
+msgstr "하우스 규칙"
+
+#: .\templates\pages\rooms\room_detail.html:101
+msgid "points"
+msgstr "점"
+
+#: .\templates\pages\rooms\room_detail.html:102
+#: .\templates\pages\rooms\room_detail.html:176
+#, python-format
+msgid "%(count)s review"
+msgstr "후기 %(count)s개"
+
+#: .\templates\pages\rooms\room_detail.html:106
+msgid "Accuracy"
+msgstr "정확도"
+
+#: .\templates\pages\rooms\room_detail.html:110
+msgid "Communication"
+msgstr "의사소통"
+
+#: .\templates\pages\rooms\room_detail.html:114
+msgid "Cleanliness"
+msgstr "청결도"
+
+#: .\templates\pages\rooms\room_detail.html:118
+msgid "Location"
+msgstr "위치"
+
+#: .\templates\pages\rooms\room_detail.html:122
+msgid "Check In"
+msgstr "체크인"
+
+#: .\templates\pages\rooms\room_detail.html:126
+msgid "Value"
+msgstr "가치"
+
+#: .\templates\pages\rooms\room_detail.html:167
+msgid "Host"
+msgstr "호스트"
+
+#: .\templates\pages\rooms\room_detail.html:168
+#, python-format
+msgid "Member Since: %(joined_month)s, %(year)s"
+msgstr "회원 가입일 : %(year)s, %(joined_month)s"
+
+#: .\templates\pages\rooms\room_detail.html:189
+#, python-format
+msgid "%(first_name)s is superhost."
+msgstr "%(first_name)s은 슈퍼호스트입니다."
+
+#: .\templates\pages\rooms\room_detail.html:197
+msgid "Response rate"
+msgstr "응답률"
+
+#: .\templates\pages\rooms\room_detail.html:198
+msgid "Response time : In one hour"
+msgstr "응답 시간"
+
+#: .\templates\pages\rooms\room_detail.html:200
+msgid "Contact the host"
+msgstr "호스트에 연락하기"
+
+#: .\templates\partials\footer.html:5
+msgid "All rights reserved"
+msgstr " 모든 권리 소유."
+
+#: .\templates\partials\nav.html:7
+msgid "Create Room"
+msgstr "방 호스팅하기"
+
+#: .\templates\partials\nav.html:9
+msgid "Reserved Rooms"
+msgstr "예약된 방"
+
+#: .\templates\partials\nav.html:15
+msgid "Guest mode"
+msgstr "게스트 모드"
+
+#: .\templates\partials\nav.html:17
+#| msgid "Host"
+msgid "Host mode"
+msgstr "호스트 모드"
+
+#: .\templates\partials\nav.html:22
+msgid "Profile"
+msgstr "프로필"
+
+#: .\templates\partials\nav.html:25
+msgid "Log Out"
+msgstr "로그아웃"
+
+#: .\templates\partials\nav.html:29
+msgid "Log In"
+msgstr "로그인"
+
+#: .\templates\partials\nav.html:32
+msgid "Sign Up"
+msgstr "회원 가입"
+
+#: .\users\models.py:21
+msgid "Male"
+msgstr "남자"
+
+#: .\users\models.py:22
+msgid "Female"
+msgstr "여자"
+
+#: .\users\models.py:23
+msgid "Other"
+msgstr "다른 성"
+
+#: .\users\models.py:29
+msgid "Korean"
+msgstr "한국어"
+
+#: .\users\models.py:30
+msgid "English"
+msgstr "영어"
+
+#: .\users\models.py:42
+msgid "Email"
+msgstr "이메일"
+
+#: .\users\models.py:43
+msgid "Github"
+msgstr "깃허브"
+
+#: .\users\models.py:44
+msgid "Kakao"
+msgstr "카카오"
+
+#~ msgid "Stop Hosting"
+#~ msgstr "게스트 모드"
+
+#~ msgid "Start Hosting"
+#~ msgstr "호스트 모드"

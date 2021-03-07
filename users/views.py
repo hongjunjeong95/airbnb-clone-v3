@@ -12,6 +12,7 @@ from django.views.generic import FormView, DetailView, UpdateView
 from django.db.utils import IntegrityError
 from django.shortcuts import redirect, reverse, render
 from django.urls import reverse_lazy
+from django.http import HttpResponse
 from . import forms, mixins, models
 from .exception import (
     LoggedOutOnlyFunctionView,
@@ -20,6 +21,7 @@ from .exception import (
     VerifyUser,
     ChangePasswordException,
 )
+from config import settings
 
 
 class SignUpView(mixins.LoggedOutOnlyView, FormView):
@@ -429,9 +431,27 @@ class ChangePasswordView(
         return self.request.user.get_absolute_url()
 
 
+@login_required
 def switch_hosting(request):
     try:
         del request.session["is_hosting"]
     except KeyError:
         request.session["is_hosting"] = True
     return redirect(reverse("core:home"))
+
+
+# def switch_language(request):
+#     lang = request.GET.get("lang", None)
+#     if lang is not None:
+#         request.session[translation.LANGUAGE_SESSION_KEY] = lang
+#     return HttpResponse(status=200)
+
+
+def switch_language(request):
+    lang = request.GET.get("lang", None)
+    if lang is not None:
+        response = HttpResponse(200)
+    print(settings.LANGUAGE_COOKIE_NAME)
+    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)
+    print(settings.LANGUAGE_COOKIE_NAME)
+    return response
