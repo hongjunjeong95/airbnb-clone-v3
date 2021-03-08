@@ -21,8 +21,8 @@
         <div class="select">
           <label for="country">Country</label>
           <select name="country" id="country" required>
-            {% for country in countries %}
-              <option value="{{country.code}}">{{country.name}}</option>
+            {% for acountry in form.country %}
+              {{acountry}}
             {% endfor %}
           </select>
         </div>
@@ -57,11 +57,8 @@
         
         <div class="select">
           <label for="room_type" class="text-lg font-bold">Room Type</label>
-          <select name="room_type" id="room_type" required>
-            {% for room_type in room_types %}
-              <option value="{{room_type.pk}}" name="{{room_type.pk}}"> {{room_type}}</option>
-            {% endfor %}
-          </select>
+          {{form.room_type}}
+          
         </div>
 
         <div class="form_input">
@@ -71,14 +68,14 @@
         <div class="checkbox">
           <h3>Amenity</h3>
           <ul>
-          {% for amenity in amenities %}
+          {% for amenity in form.amenities %}
             <li>
-              <label for=amenity_{{amenity.pk}}>{{amenity.name}}</label>
+              <label for=amenity_{{amenity.data.value}}>{{amenity.data.label}}</label>
               <input
                 type="checkbox"
                 name="amenities"
-                value="{{amenity.pk}}"
-                id="amenity_{{amenity.pk}}"
+                value="{{amenity.data.value}}"
+                id="amenity_{{amenity.data.value}}"
                 >
             </li>
           {% endfor %}
@@ -89,14 +86,14 @@
           <h3>Facility</h3>
 
           <ul>
-          {% for facility in facilities %}
+          {% for facility in form.facilities %}
             <li>
-              <label for=facility_{{facility.pk}}>{{facility.name}}</label>
+              <label for=facility_{{facility.data.value}}>{{facility.data.label}}</label>
               <input
                 type="checkbox"
                 name="facilities"
-                value="{{facility.pk}}"
-                id="facility_{{facility.pk}}"
+                value="{{facility.data.value}}"
+                id="facility_{{facility.data.value}}"
                 >
             </li>
           {% endfor %}
@@ -106,14 +103,14 @@
         <div class="checkbox">
           <h3>House Rules</h3>
           <ul>
-          {% for house_rule in house_rules %}
+          {% for house_rule in form.house_rules %}
             <li>
-              <label for=house_rule_{{house_rule.pk}}>{{house_rule.name}}</label>
+              <label for=house_rule_{{house_rule.data.value}}>{{house_rule.data.label}}</label>
               <input
                 type="checkbox"
                 name="house_rules"
-                value="{{house_rule.pk}}"
-                id="house_rule_{{house_rule.pk}}"
+                value="{{house_rule.data.value}}"
+                id="house_rule_{{house_rule.data.value}}"
                 >
             </li>
           {% endfor %}
