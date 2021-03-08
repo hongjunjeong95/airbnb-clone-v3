@@ -4,7 +4,7 @@
   {% if user.is_authenticated %}
     <li class="nav_link">
       {% if request.session.is_hosting %}
-        <a href="#">{% trans 'Create Room' %}</a>
+        <a href="{% url 'rooms:create-room' %}">{% trans 'Create Room' %}</a>
       {% else %}
         <a href="#">{% trans 'Reserved Rooms' %}</a>
       {% endif %}

@@ -440,18 +440,9 @@ def switch_hosting(request):
     return redirect(reverse("core:home"))
 
 
-# def switch_language(request):
-#     lang = request.GET.get("lang", None)
-#     if lang is not None:
-#         request.session[translation.LANGUAGE_SESSION_KEY] = lang
-#     return HttpResponse(status=200)
-
-
 def switch_language(request):
     lang = request.GET.get("lang", None)
     if lang is not None:
         response = HttpResponse(200)
-    print(settings.LANGUAGE_COOKIE_NAME)
     response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)
-    print(settings.LANGUAGE_COOKIE_NAME)
     return response
