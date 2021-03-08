@@ -52,7 +52,7 @@
                             </div>
                             {% if user.pk == room.host.pk and request.session.is_hosting %}
                                 <button class="button">
-                                <a href="#">{% trans "Edit Room" %}</a>
+                                <a href="{% url 'rooms:edit-room' room.pk%}">{% trans "Edit Room" %}</a>
                                 </button>
                             {% endif %}
                         </div>

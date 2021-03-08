@@ -16,3 +16,7 @@ class VerifyUser(Exception):
 
 class ChangePasswordException(Exception):
     pass
+
+
+class HostOnly(Exception):
+    pass
