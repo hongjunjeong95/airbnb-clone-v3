@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from django_countries.fields import CountryField
+from django.shortcuts import reverse
 
 from core import models as core_models
 
@@ -77,6 +78,9 @@ class Room(core_models.TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("rooms:room-detail", kwargs={"pk": self.pk})
 
     def get_first_photo(self):
         try:

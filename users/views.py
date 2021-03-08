@@ -296,7 +296,7 @@ def userDetail(request, pk):
     )
 
 
-class UserProfileView(mixins.LoginOnlyView, DetailView):
+class UserProfileView(mixins.LoggedInOnlyView, DetailView):
 
     """ User Profile View """
 
@@ -320,7 +320,7 @@ class UserProfileView(mixins.LoginOnlyView, DetailView):
         return context
 
 
-class UpdateProfileView(mixins.LoginOnlyView, UpdateView):
+class UpdateProfileView(mixins.LoggedInOnlyView, UpdateView):
     model = models.User
     fields = {
         "avatar",
@@ -409,7 +409,7 @@ def change_password(request, pk):
 
 
 class ChangePasswordView(
-    mixins.LoginOnlyView,
+    mixins.LoggedInOnlyView,
     mixins.EmailLoginOnlyView,
     SuccessMessageMixin,
     PasswordChangeView,
