@@ -21,7 +21,7 @@
       </div>
       {% block search-bar %}
         <div class="w-full flex justify-center items-center">
-          <form>
+          <form action="{% url 'core:search' %}" class="w-3/4">
             <input 
             type="text"
             placeholder="{% trans 'Searching By City' %}"

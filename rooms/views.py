@@ -1,9 +1,12 @@
 from django.views.generic import ListView, DetailView, FormView, UpdateView
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, reverse
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect, reverse
 from django.http import Http404
+
+from django_countries import countries
 
 from . import models as room_models
 from photos import models as photo_models
@@ -151,3 +154,95 @@ def deleteRoom(request, pk):
     except HostOnly as error:
         messages.error(request, error)
         return redirect(reverse("core:home"))
+
+
+def searchView(request):
+    city = request.GET.get("city", "Anywhere")
+    country = request.GET.get("country")
+    price = int(request.GET.get("price", 0))
+    guests = int(request.GET.get("guests", 0))
+    bedrooms = int(request.GET.get("bedrooms", 0))
+    beds = int(request.GET.get("beds", 0))
+    bathrooms = int(request.GET.get("bathrooms", 0))
+    room_type = int(request.GET.get("room_type", 0))
+    s_amenities = request.GET.getlist("amenities")
+    s_facilities = request.GET.getlist("facilities")
+    s_house_rules = request.GET.getlist("house_rules")
+    instant_book = bool(request.GET.get("instant_book"))
+
+    room_types = room_models.RoomType.objects.all()
+    amenities = room_models.Amenity.objects.all()
+    facilities = room_models.Facility.objects.all()
+    house_rules = room_models.HouseRule.objects.all()
+
+    filter_args = {}
+
+    form = {
+        "city": city,
+        "countries": countries,
+        "price": price,
+        "guests": guests,
+        "bedrooms": bedrooms,
+        "beds": beds,
+        "bathrooms": bathrooms,
+        "room_types": room_types,
+        "amenities": amenities,
+        "facilities": facilities,
+        "house_rules": house_rules,
+        "instant_book": instant_book,
+    }
+
+    choices = {
+        "s_country": country,
+        "s_room_type": room_type,
+        "s_amenities": s_amenities,
+        "s_facilities": s_facilities,
+        "s_house_rules": s_house_rules,
+    }
+
+    if city != "Anywhere":
+        filter_args["city__startswith"] = city
+
+    filter_args["country"] = country
+
+    if price != 0:
+        filter_args["price__lte"] = price
+    if guests != 0:
+        filter_args["guests__gte"] = guests
+    if bedrooms != 0:
+        filter_args["bedrooms__gte"] = bedrooms
+    if beds != 0:
+        filter_args["beds__gte"] = beds
+    if bathrooms != 0:
+        filter_args["bathrooms__gte"] = bathrooms
+
+    if room_type != 0:
+        filter_args["room_type__pk"] = room_type
+
+    if len(s_amenities) > 0:
+        for s_amenity in s_amenities:
+            filter_args["amenities__pk"] = int(s_amenity)
+
+    if len(s_facilities) > 0:
+        for s_facility in s_facilities:
+            filter_args["facilities__pk"] = int(s_facility)
+
+    if len(s_house_rules) > 0:
+        for s_house_rule in s_house_rules:
+            filter_args["house_rules__pk"] = int(s_house_rule)
+
+    if instant_book:
+        filter_args["instant_book"] = instant_book
+
+    qs = room_models.Room.objects.filter(**filter_args).order_by("created")
+    paginoatr = Paginator(qs, 12, orphans=6)
+    page = int(request.GET.get("page", 1))
+    page_sector = (page - 1) // 5
+    page_sector = page_sector * 5
+    rooms = paginoatr.get_page(page)
+
+    return render(
+        request,
+        "pages/root/search.html",
+        context={"rooms": rooms, "page_sector": page_sector, **form, **choices},
+    )
