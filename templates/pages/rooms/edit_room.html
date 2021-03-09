@@ -132,7 +132,7 @@
         <a href="#">Photo Settings</a>
       </button>
       <button class="button bg-red-600">
-        <a href="#">Delete Room</a>
+        <a href="{% url 'rooms:delete-room' room.pk %}">Delete Room</a>
       </button>
       <button class="button bg-gray-700">
         <a href="{{room.get_absolute_url}}">Back</a>

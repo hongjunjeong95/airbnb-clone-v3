@@ -3,14 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, reverse
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-
-from django_countries import countries
+from django.http import Http404
 
 from . import models as room_models
 from photos import models as photo_models
 from . import forms
 from users import mixins
-from users.exception import HostOnly, VerifyUser
+from users.exception import HostOnly
 
 
 class HomeView(ListView):
@@ -129,3 +128,26 @@ class EditRoomView(mixins.LoggedInOnlyView, UpdateView):
         context["s_facilities"] = s_facilities
         context["s_house_rules"] = s_house_rules
         return context
+
+
+@login_required
+def deleteRoom(request, pk):
+    try:
+        if not request.session.get("is_hosting"):
+            raise HostOnly("Change ot host mode")
+
+        room = room_models.Room.objects.get_or_none(pk=pk)
+        if request.user.pk != room.host.pk:
+            raise Http404("Page Not Found")
+
+        if room is None:
+            messages.error(request, "Room does not exsit")
+            return redirect(reverse("core:home"))
+        room.delete()
+
+        messages.success(request, f"Delete {room.name} successfully")
+
+        return redirect(reverse("users:profile", kwargs={"pk": request.user.pk}))
+    except HostOnly as error:
+        messages.error(request, error)
+        return redirect(reverse("core:home"))
