@@ -287,3 +287,26 @@ def photoList(request, pk):
     except HostOnly as error:
         messages.error(request, error)
         return redirect(reverse("core:home"))
+
+
+class PhotoListView(mixins.LoggedInOnlyView, DetailView):
+
+    """ Photo List View Definition """
+
+    model = room_models.Room
+    template_name = "pages/rooms/photos/photo_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+
+        page = int(self.request.GET.get("page", 1))
+        page_sector = (page - 1) // 5
+        page_sector = page_sector * 5
+        context["page_sector"] = page_sector
+
+        room = context["room"]
+        qs = room.photos.all()
+        paginator = Paginator(qs, 10, orphans=5)
+        photos = paginator.get_page(page)
+        context["photos"] = photos
+        return context
