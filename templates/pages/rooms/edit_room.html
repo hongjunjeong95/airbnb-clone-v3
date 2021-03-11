@@ -129,7 +129,7 @@
         <button class="form_button">Edit</button>
       </form>
       <button class="button">
-        <a href="#">Photo Settings</a>
+        <a href="{% url 'rooms:photo-list' room.pk %}">Photo Settings</a>
       </button>
       <button class="button bg-red-600">
         <a href="{% url 'rooms:delete-room' room.pk %}">Delete Room</a>
