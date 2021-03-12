@@ -376,3 +376,23 @@ class EditPhotoView(
     def get_success_url(self):
         room_pk = self.kwargs.get("room_pk")
         return reverse("rooms:photo-list", kwargs={"pk": room_pk})
+
+
+@login_required
+def deletePhoto(request, room_pk, photo_pk):
+    try:
+        if not request.session.get("is_hosting"):
+            raise HostOnly("Page Not Found")
+
+        photo = photo_models.Photo.objects.get_or_none(pk=photo_pk)
+        if photo is None:
+            messages.error(request, "Photo does not exsit")
+            return redirect(reverse("core:home"))
+        if request.user.pk != photo.room.host.pk:
+            raise Http404("Page Not Found")
+        photo.delete()
+        messages.success(request, f"Delete {photo} successfully")
+        return redirect(reverse("rooms:photo-list", kwargs={"pk": room_pk}))
+    except HostOnly as error:
+        messages.error(request, error)
+        return redirect(reverse("core:home"))

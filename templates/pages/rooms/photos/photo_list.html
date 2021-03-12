@@ -26,7 +26,7 @@
               <a href="{% url 'rooms:edit-photo' room.pk photo.pk %}">Edit Photo</a>
             </button>
             <button class="button mt-0 bg-red-500">
-              <a href="#">Delete Photo</a>
+              <a href="{% url 'rooms:delete-photo' room.pk photo.pk %}">Delete Photo</a>
             </button>
           </div>
         </li>
