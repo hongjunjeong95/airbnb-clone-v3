@@ -141,6 +141,7 @@ def deleteRoom(request, pk):
 
         room = room_models.Room.objects.get_or_none(pk=pk)
         if request.user.pk != room.host.pk:
+
             raise Http404("Page Not Found")
 
         if room is None:
@@ -152,6 +153,7 @@ def deleteRoom(request, pk):
 
         return redirect(reverse("users:profile", kwargs={"pk": request.user.pk}))
     except HostOnly as error:
+
         messages.error(request, error)
         return redirect(reverse("core:home"))
 
@@ -310,3 +312,46 @@ class PhotoListView(mixins.LoggedInOnlyView, DetailView):
         photos = paginator.get_page(page)
         context["photos"] = photos
         return context
+
+
+@login_required
+def createPhoto(request, pk):
+    if request.method == "GET":
+        try:
+            if not request.session.get("is_hosting"):
+                raise HostOnly("Page Not Found")
+
+            room = room_models.Room.objects.get(pk=pk)
+            if room is None:
+                raise Http404("Page not found")
+
+            if request.user.pk != room.host.pk:
+                raise Http404("Page not found")
+
+            return render(
+                request, "pages/rooms/photos/create_photo.html", {"room": room}
+            )
+        except HostOnly as error:
+            messages.error(request, error)
+            return redirect(reverse("core:home"))
+    elif request.method == "POST":
+        try:
+            if not request.session.get("is_hosting"):
+                raise HostOnly("Page Not Found")
+
+            room = room_models.Room.objects.get(pk=pk)
+            if room is None:
+                raise Http404("Page not found")
+
+            if request.user.pk != room.host.pk:
+                raise Http404("Page not found")
+
+            caption = request.POST.get("caption")
+            photo = request.FILES.get("photo")
+            photo_models.Photo.objects.create(caption=caption, room=room, file=photo)
+
+            messages.success(request, f"Create {caption}-photo successfully")
+            return redirect(reverse("rooms:photo-list", kwargs={"pk": room.pk}))
+        except HostOnly as error:
+            messages.error(request, error)
+            return redirect(reverse("core:home"))
