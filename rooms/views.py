@@ -344,3 +344,45 @@ class CreatePhotoView(
         photo.room = room
         photo.save()
         return redirect(reverse("rooms:photo-list", kwargs={"pk": pk}))
+
+
+@login_required
+def editPhoto(request, room_pk, photo_pk):
+    if request.method == "GET":
+        try:
+            if not request.session.get("is_hosting"):
+                raise HostOnly("Page Not Found")
+
+            room = room_models.Room.objects.get_or_none(pk=room_pk)
+            if room is None:
+                messages.error(request, "Room does not exist")
+                return redirect(reverse("core:home"))
+
+            if request.user.pk != room.host.pk:
+                raise Http404("Page Not Found")
+            photo = room.photos.get(pk=photo_pk)
+
+            return render(
+                request,
+                "pages/rooms/photos/edit_photo.html",
+                context={"room": room, "photo": photo},
+            )
+        except HostOnly as error:
+            messages.error(request, error)
+            return redirect(reverse("core:home"))
+    elif request.method == "POST":
+        try:
+            if not request.session.get("is_hosting"):
+                raise HostOnly("Page Not Found")
+            caption = request.POST.get("caption")
+
+            room = room_models.Room.objects.get_or_none(pk=room_pk)
+            photo = room.photos.get(pk=photo_pk)
+            photo.caption = caption
+            photo.save()
+
+            messages.success(request, f"Edit {caption}-photo successfully")
+            return redirect(reverse("rooms:photo-list", kwargs={"pk": room.pk}))
+        except HostOnly as error:
+            messages.error(request, error)
+            return redirect(reverse("core:home"))
