@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from rooms import views
 
 app_name = "rooms"
 
@@ -14,7 +14,7 @@ urlpatterns = [
     ),
     path(
         "<int:room_pk>/photos/<int:photo_pk>/edit/",
-        views.editPhoto,
+        views.EditPhotoView.as_view(),
         name="edit-photo",
     ),
 ]

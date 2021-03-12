@@ -50,9 +50,7 @@ class RoomDetailView(DetailView):
         return context
 
 
-class CreateRoomView(
-    mixins.LoggedInOnlyView, mixins.HostOnlyView, SuccessMessageMixin, FormView
-):
+class CreateRoomView(mixins.LoggedInOnlyView, mixins.HostOnlyView, FormView):
 
     """ Create Room View Definition """
 
@@ -72,6 +70,8 @@ class CreateRoomView(
 
 
 class EditRoomView(mixins.LoggedInOnlyView, mixins.HostOnlyView, UpdateView):
+
+    """ Edit Room View Definition """
 
     model = room_models.Room
     template_name = "pages/rooms/edit_room.html"
@@ -316,9 +316,7 @@ class PhotoListView(mixins.LoggedInOnlyView, mixins.HostOnlyView, DetailView):
         return context
 
 
-class CreatePhotoView(
-    mixins.LoggedInOnlyView, mixins.HostOnlyView, SuccessMessageMixin, FormView
-):
+class CreatePhotoView(mixins.LoggedInOnlyView, mixins.HostOnlyView, FormView):
 
     """ Create Photo View Definition """
 
@@ -346,43 +344,35 @@ class CreatePhotoView(
         return redirect(reverse("rooms:photo-list", kwargs={"pk": pk}))
 
 
-@login_required
-def editPhoto(request, room_pk, photo_pk):
-    if request.method == "GET":
-        try:
-            if not request.session.get("is_hosting"):
-                raise HostOnly("Page Not Found")
+class EditPhotoView(
+    mixins.LoggedInOnlyView, mixins.HostOnlyView, SuccessMessageMixin, UpdateView
+):
 
-            room = room_models.Room.objects.get_or_none(pk=room_pk)
-            if room is None:
-                messages.error(request, "Room does not exist")
-                return redirect(reverse("core:home"))
+    """ Edit Photo View Definition """
 
-            if request.user.pk != room.host.pk:
-                raise Http404("Page Not Found")
-            photo = room.photos.get(pk=photo_pk)
+    model = photo_models.Photo
+    template_name = "pages/rooms/photos/edit_photo.html"
+    fields = ("caption",)
+    pk_url_kwarg = "photo_pk"
+    success_message = "Photo Updated"
 
-            return render(
-                request,
-                "pages/rooms/photos/edit_photo.html",
-                context={"room": room, "photo": photo},
-            )
-        except HostOnly as error:
-            messages.error(request, error)
-            return redirect(reverse("core:home"))
-    elif request.method == "POST":
-        try:
-            if not request.session.get("is_hosting"):
-                raise HostOnly("Page Not Found")
-            caption = request.POST.get("caption")
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=form_class)
+        form.fields["caption"].widget.attrs = {"placeholder": "Caption"}
+        return form
 
-            room = room_models.Room.objects.get_or_none(pk=room_pk)
-            photo = room.photos.get(pk=photo_pk)
-            photo.caption = caption
-            photo.save()
+    def get_object(self, queryset=None):
+        photo = super().get_object(queryset=queryset)
+        if self.request.user.pk != photo.room.host.pk:
+            raise Http404("Page not found")
+        return photo
 
-            messages.success(request, f"Edit {caption}-photo successfully")
-            return redirect(reverse("rooms:photo-list", kwargs={"pk": room.pk}))
-        except HostOnly as error:
-            messages.error(request, error)
-            return redirect(reverse("core:home"))
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        photo = context["photo"]
+        context["room"] = photo.room
+        return context
+
+    def get_success_url(self):
+        room_pk = self.kwargs.get("room_pk")
+        return reverse("rooms:photo-list", kwargs={"pk": room_pk})

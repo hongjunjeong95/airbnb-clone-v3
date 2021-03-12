@@ -12,13 +12,12 @@ from django.views.generic import FormView, DetailView, UpdateView
 from django.db.utils import IntegrityError
 from django.shortcuts import redirect, reverse, render
 from django.urls import reverse_lazy
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from . import forms, mixins, models
 from .exception import (
     LoggedOutOnlyFunctionView,
     GithubException,
     KakaoException,
-    VerifyUser,
     ChangePasswordException,
 )
 from config import settings
@@ -357,7 +356,7 @@ def change_password(request, pk):
             if request.user.login_method != "email":
                 raise EmailLoggedInOnly("Page not found 404")
             if request.user.pk != pk:
-                raise VerifyUser("Page Not found 404")
+                raise Http404("Page Not found 404")
             user = models.User.objects.get_or_none(pk=pk)
             if user is None:
                 messages.error(request, "User does not exist")
@@ -367,9 +366,6 @@ def change_password(request, pk):
                 "pages/users/change_password.html",
                 context={"user": user},
             )
-        except VerifyUser as error:
-            messages.error(request, error)
-            return redirect("core:home")
         except EmailLoggedInOnly as error:
             messages.error(request, error)
             return redirect("core:home")
@@ -378,7 +374,7 @@ def change_password(request, pk):
             if request.user.login_method != "email":
                 raise EmailLoggedInOnly("Page not found 404")
             if request.user.pk != pk:
-                raise VerifyUser("Page Not found 404")
+                raise Http404("Page Not found 404")
             user = models.User.objects.get_or_none(pk=pk)
             if user is None:
                 messages.error(request, "User does not exist")
@@ -400,9 +396,6 @@ def change_password(request, pk):
         except ChangePasswordException as error:
             messages.error(request, error)
             return redirect(reverse("core:home"))
-        except VerifyUser as error:
-            messages.error(request, error)
-            return redirect("core:home")
         except EmailLoggedInOnly as error:
             messages.error(request, error)
             return redirect("core:home")
