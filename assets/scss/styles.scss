@@ -183,4 +183,8 @@
   }
 }
 
+.cal-grid {
+  @apply grid grid-cols-7 place-items-center;
+}
+
 @tailwind utilities;

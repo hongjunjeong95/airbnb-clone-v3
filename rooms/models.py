@@ -2,8 +2,10 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django_countries.fields import CountryField
 from django.shortcuts import reverse
+from django.utils import timezone
 
 from core import models as core_models
+from utils.cal import Calendar
 
 
 class AbstractItem(core_models.TimeStampedModel):
@@ -182,3 +184,19 @@ class Room(core_models.TimeStampedModel):
         value = round(all_value_points / len(reviews), 2)
 
         return value
+
+    def get_calendar(self):
+        now = timezone.now()
+        year = now.year
+        month = now.month
+        next_month = month + 1
+
+        if next_month == 13:
+            next_month = 1
+            next_year = year + 1
+        else:
+            next_year = year
+
+        this_month_cal = Calendar(year, month)
+        next_month_cal = Calendar(next_year, next_month)
+        return [this_month_cal, next_month_cal]
