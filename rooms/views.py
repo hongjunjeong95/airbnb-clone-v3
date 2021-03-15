@@ -252,47 +252,6 @@ def searchView(request):
     )
 
 
-@login_required
-def photoList(request, pk):
-    try:
-        if not request.session.get("is_hosting"):
-            raise HostOnly("Change host mode")
-
-        page = request.GET.get("page", 1)
-
-        if page == "":
-            page = 1
-        else:
-            page = int(page)
-
-        page_sector = ((page - 1) // 5) * 5
-
-        room = room_models.Room.objects.get(pk=pk)
-        if room is None:
-            messages.error(request, "Room does not exsit")
-            return redirect(reverse("rooms:room-detail", kwargs={"pk": room.pk}))
-
-        qs = room.photos.all()
-        paginator = Paginator(qs, 10, orphans=5)
-        photos = paginator.get_page(page)
-
-        if request.user.pk != room.host.pk:
-            raise Http404("Page Not Found")
-
-        return render(
-            request,
-            "pages/rooms/photos/photo_list.html",
-            context={
-                "photos": photos,
-                "page_sector": page_sector,
-                "room": room,
-            },
-        )
-    except HostOnly as error:
-        messages.error(request, error)
-        return redirect(reverse("core:home"))
-
-
 class PhotoListView(mixins.LoggedInOnlyView, mixins.HostOnlyView, DetailView):
 
     """ Photo List View Definition """
