@@ -1,7 +1,9 @@
 import datetime
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect, reverse, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import Http404
+from django.core.paginator import Paginator
 
 from reservations import models as reservation_models
 from rooms import models as room_models
@@ -32,3 +34,36 @@ def createReservation(request, room_pk, year, month, day):
 
         messages.success(request, f"Reserve {room} successfully")
         return redirect(reverse("rooms:room-detail", kwargs={"pk": room_pk}))
+
+
+@login_required
+def reservationList(request, user_pk):
+    qs = reservation_models.Reservation.objects.filter(guest_id=user_pk)
+
+    if not qs:
+        # if 'qs' Queryset is empty, execute this code.
+        return render(
+            request,
+            "pages/reservations/reservation_list.html",
+            context={"reservations": qs},
+        )
+
+    for reservation in qs:
+        # Route Protection
+        if reservation.guest != request.user:
+            raise Http404()
+
+    page = request.GET.get("page", 1)
+    if page == "":
+        page = 1
+    else:
+        page = int(page)
+    page_sector = (page - 1) // 5
+    page_sector = page_sector * 5
+    paginator = Paginator(qs, 8, orphans=4)
+    reservations = paginator.get_page(page)
+    return render(
+        request,
+        "pages/reservations/reservation_list.html",
+        context={"reservations": reservations, "page_sector": page_sector},
+    )

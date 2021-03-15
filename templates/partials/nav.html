@@ -6,7 +6,7 @@
       {% if request.session.is_hosting %}
         <a href="{% url 'rooms:create-room' %}">{% trans 'Create Room' %}</a>
       {% else %}
-        <a href="#">{% trans 'Reserved Rooms' %}</a>
+        <a href="{% url 'reservations:list' user.pk %}">{% trans 'Reserved Rooms' %}</a>
       {% endif %}
     </li>
     <li class="nav_link">

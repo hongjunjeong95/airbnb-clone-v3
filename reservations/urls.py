@@ -9,4 +9,9 @@ urlpatterns = [
         views.createReservation,
         name="create",
     ),
+    path(
+        "user/<int:user_pk>/",
+        views.reservationList,
+        name="list",
+    ),
 ]
