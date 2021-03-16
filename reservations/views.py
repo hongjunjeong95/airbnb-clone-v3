@@ -98,30 +98,6 @@ class ReservationListView(mixins.LoggedInOnlyView, ListView):
         return context
 
 
-@login_required
-def reservationDetail(request, pk):
-    reservation = reservation_models.Reservation.objects.get_or_none(pk=pk)
-    if reservation is None:
-        messages.error(request, "Reservation does not exist")
-        return redirect(reverse("core:home"))
-    if reservation.guest.pk != request.user.pk:
-        raise Http404()
-    bookedDays = reservation.bookedDays.all()
-    days = []
-
-    for day in bookedDays:
-        day = str(day)
-        day = int(day.split("-")[2])
-        days.append(day)
-
-    room = reservation.room
-    return render(
-        request,
-        "pages/reservations/reservation_detail.html",
-        context={"room": room, "reservation": reservation, "days": days},
-    )
-
-
 class ReservationDetailView(mixins.LoggedInOnlyView, DetailView):
 
     """ Reservation Detail View Definition """
@@ -149,3 +125,30 @@ class ReservationDetailView(mixins.LoggedInOnlyView, DetailView):
 
         context["days"] = days
         return context
+
+
+@login_required
+def reservationHostList(request, pk):
+    reservations = reservation_models.Reservation.objects.filter(room__host_id=pk)
+
+    qs = []
+    for reservation in reservations:
+        # Route Protection
+        if reservation.room.host != request.user:
+            raise Http404()
+        if reservation.room not in qs:
+            qs.append(reservation.room)
+    page = request.GET.get("page", 1)
+    if page == "":
+        page = 1
+    else:
+        page = int(page)
+    page_sector = (page - 1) // 5
+    page_sector = page_sector * 5
+    paginator = Paginator(qs, 8, orphans=4)
+    rooms = paginator.get_page(page)
+    return render(
+        request,
+        "pages/reservations/reservation_host_list.html",
+        context={"rooms": rooms, "page_sector": page_sector},
+    )
