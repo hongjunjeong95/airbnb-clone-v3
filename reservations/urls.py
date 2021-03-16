@@ -11,7 +11,7 @@ urlpatterns = [
     ),
     path(
         "user/<int:user_pk>/",
-        views.reservationList,
+        views.ReservationListView.as_view(),
         name="list",
     ),
 ]

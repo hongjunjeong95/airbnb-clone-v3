@@ -1,12 +1,14 @@
 import datetime
 from django.shortcuts import redirect, reverse, render
 from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView
 from django.contrib import messages
 from django.http import Http404
 from django.core.paginator import Paginator
 
 from reservations import models as reservation_models
 from rooms import models as room_models
+from users import mixins
 
 
 class CreateError(Exception):
@@ -67,3 +69,30 @@ def reservationList(request, user_pk):
         "pages/reservations/reservation_list.html",
         context={"reservations": reservations, "page_sector": page_sector},
     )
+
+
+class ReservationListView(mixins.LoggedInOnlyView, ListView):
+
+    """ Reservation List View Definition """
+
+    template_name = "pages/reservations/reservation_list.html"
+    context_object_name = "reservations"
+    paginate_by = 12
+    paginate_orphans = 6
+    ordering = "created"
+
+    def get_queryset(self):
+        user_pk = self.kwargs.get("user_pk")
+
+        if user_pk != self.request.user.pk:
+            return redirect(reverse("core:home"))
+
+        return reservation_models.Reservation.objects.filter(guest_id=user_pk)
+
+    def get_context_data(self):
+        page = int(self.request.GET.get("page", 1))
+        page_sector = (page - 1) // 5
+        page_sector = page_sector * 5
+        context = super().get_context_data()
+        context["page_sector"] = page_sector
+        return context
