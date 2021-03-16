@@ -1,7 +1,7 @@
 import datetime
 from django.shortcuts import redirect, reverse, render
 from django.contrib.auth.decorators import login_required
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.contrib import messages
 from django.http import Http404
 from django.core.paginator import Paginator
@@ -89,7 +89,7 @@ class ReservationListView(mixins.LoggedInOnlyView, ListView):
 
         return reservation_models.Reservation.objects.filter(guest_id=user_pk)
 
-    def get_context_data(self):
+    def get_context_data(self, **kwargs):
         page = int(self.request.GET.get("page", 1))
         page_sector = (page - 1) // 5
         page_sector = page_sector * 5
@@ -120,3 +120,32 @@ def reservationDetail(request, pk):
         "pages/reservations/reservation_detail.html",
         context={"room": room, "reservation": reservation, "days": days},
     )
+
+
+class ReservationDetailView(mixins.LoggedInOnlyView, DetailView):
+
+    """ Reservation Detail View Definition """
+
+    model = reservation_models.Reservation
+    template_name = "pages/reservations/reservation_detail.html"
+
+    def get_context_data(self, **kwargs):
+        # Get room
+        context = super().get_context_data(**kwargs)
+        reservation = context["reservation"]
+        room = reservation.room
+        context["room"] = room
+
+        if reservation.guest.pk != self.request.user.pk:
+            return redirect(reverse("core:home"))
+
+        # Get days
+        bookedDays = reservation.bookedDays.all()
+        days = []
+        for day in bookedDays:
+            day = str(day)
+            day = int(day.split("-")[2])
+            days.append(day)
+
+        context["days"] = days
+        return context

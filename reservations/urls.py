@@ -16,7 +16,7 @@ urlpatterns = [
     ),
     path(
         "<int:pk>/",
-        views.reservationDetail,
+        views.ReservationDetailView.as_view(),
         name="detail",
     ),
 ]
