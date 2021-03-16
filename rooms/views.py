@@ -252,26 +252,32 @@ def searchView(request):
     )
 
 
-class PhotoListView(mixins.LoggedInOnlyView, mixins.HostOnlyView, DetailView):
+class PhotoListView(mixins.LoggedInOnlyView, mixins.HostOnlyView, ListView):
 
     """ Photo List View Definition """
 
-    model = room_models.Room
     template_name = "pages/rooms/photos/photo_list.html"
+    context_object_name = "photos"
+    paginate_by = 10
+    paginate_orphans = 5
+    ordering = "created"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
+    def get_queryset(self):
+        pk = self.kwargs.get("pk")
+        room = room_models.Room.objects.get(pk=pk)
+        if room.host.pk != self.request.user.pk:
+            return redirect(reverse("core:home"))
 
+        return room.photos.all()
+
+    def get_context_data(self):
         page = int(self.request.GET.get("page", 1))
         page_sector = (page - 1) // 5
         page_sector = page_sector * 5
+        context = super().get_context_data()
         context["page_sector"] = page_sector
-
-        room = context["room"]
-        qs = room.photos.all()
-        paginator = Paginator(qs, 10, orphans=5)
-        photos = paginator.get_page(page)
-        context["photos"] = photos
+        room_pk = self.kwargs.get("pk")
+        context["room_pk"] = room_pk
         return context
 
 

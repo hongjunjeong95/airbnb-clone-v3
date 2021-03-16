@@ -11,7 +11,7 @@
     <div class="flex justify-between mb-8 mx-4">
       <h1 class="font-bold text-4xl ">{{room.name}}</h1>
       <button class="button mt-0 w-1/6">
-        <a href="{% url 'rooms:create-photo' room.pk %}">Create Photo</a>
+        <a href="{% url 'rooms:create-photo' room_pk %}">Create Photo</a>
       </button>
     </div>
     <ul class="grid grid-cols-2 auto-rows-200px gap-4">
@@ -23,10 +23,10 @@
           <div>
             <h2 class="text-bse font-bold w-56 mb-4 line-clamp-2">{{photo}}</h2>
             <button class="button mt-0 mb-4">
-              <a href="{% url 'rooms:edit-photo' room.pk photo.pk %}">Edit Photo</a>
+              <a href="{% url 'rooms:edit-photo' room_pk photo.pk %}">Edit Photo</a>
             </button>
             <button class="button mt-0 bg-red-500">
-              <a href="{% url 'rooms:delete-photo' room.pk photo.pk %}">Delete Photo</a>
+              <a href="{% url 'rooms:delete-photo' room_pk photo.pk %}">Delete Photo</a>
             </button>
           </div>
         </li>
@@ -34,11 +34,11 @@
     </ul>
     <div class="flex justify-center mt-6 itmes-center">
       <button class="button bg-gray-700 w-1/6">
-        <a href="{% url 'rooms:edit-room' room.pk %}">Back</a>
+        <a href="{% url 'rooms:edit-room' room_pk %}">Back</a>
       </button>
     </div>
     <div class="flex justify-center mt-20 itmes-center">
-      {% include 'mixins/page_number.html' with page=photos %}
+      {% include 'mixins/page_number.html' with page=page_obj %}
     </div>
   </div>
 </div>
