@@ -96,3 +96,27 @@ class ReservationListView(mixins.LoggedInOnlyView, ListView):
         context = super().get_context_data()
         context["page_sector"] = page_sector
         return context
+
+
+@login_required
+def reservationDetail(request, pk):
+    reservation = reservation_models.Reservation.objects.get_or_none(pk=pk)
+    if reservation is None:
+        messages.error(request, "Reservation does not exist")
+        return redirect(reverse("core:home"))
+    if reservation.guest.pk != request.user.pk:
+        raise Http404()
+    bookedDays = reservation.bookedDays.all()
+    days = []
+
+    for day in bookedDays:
+        day = str(day)
+        day = int(day.split("-")[2])
+        days.append(day)
+
+    room = reservation.room
+    return render(
+        request,
+        "pages/reservations/reservation_detail.html",
+        context={"room": room, "reservation": reservation, "days": days},
+    )

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% load remainder_op %}
+
+{% block page_title %}
+    Reservation-{{reservation}}
+{% endblock page_title %}
+
+{% block content %}
+    <div class="flex flex-col items-center justify-items-center">
+        <div class="w-10/12">
+            <div class="grid grid-cols-2 grid-rows-2-200px gap-2 mb-12">
+                {% if room.get_first_photo is not None %}
+                    <img src="{{room.get_first_photo}}" class="row-span-full rounded-tl-lg rounded-bl-lg h-full w-full bg-cover bg-center" alt="Room Photo">
+                {% endif %}
+                <div class="grid grid-cols-2 grid-rows-2-200px gap-2">
+                    {% for index, photo in room.get_four_photo %}
+                        {% remainder_op index as remainder %}
+                        <img src="{{photo.file.url}}" class="h-full w-full bg-cover bg-center {% if remainder == 1 %}rounded-tr-lg{% elif remainder == 3 %}rounded-br-lg{% endif %}" alt="Room Photo">
+                    {% endfor %}
+                </div>
+            </div>
+            <main class="flex">
+                <div class="flex flex-col w-3/5">
+                    <div class="flex items-center ">
+                        <h1 class="text-3xl font-bold mb-4">{{room.name}}</h1>
+                        <span class="text-lg font-bold mb-2 ml-4 {% if reservation.status == 'pending' %} text-yellow-500 {% elif reservation.status == 'canceled' %} text-red-600 {% else %} text-green-600 {% endif %}">{{reservation.status|capfirst}}</span>
+                    </div>
+                    <div class="flex text-gray-500 mb-5">
+                        <div class="rating">
+                            <i class="fas fa-star text-red-500"></i>
+                            <span class="font-bold">{{room.get_review_points}}</span>
+                            <span class=" font-normal">({{room.reviews.count}})</span>
+                            <span class="mx-1">&centerdot;</span>
+                        </div>
+                        {% if room.host.superhost %}
+                            <span class="ml-1">Superhost</span>
+                            <span class="mx-2">&centerdot;</span>
+                        {% endif %}
+                        <div class="font-medium">
+                            <span class="mr-1">{{room.address}},</span>
+                            <span class="mr-1">{{room.city}},</span>
+                            <span>{{room.country.name}}</span>
+                        </div>
+                    </div>
+                    <div class="flex mb-10 items-center">
+                        <button class="button w-48 bg-red-500">
+                            <a  href="#">Cancel Reservation</a>
+                        </button>
+                    </div>
+                    <div class="w-11/12 grid grid-cols-2 gap-10 border-b border-gray-300 mb-6 pb-6">
+                        {% include 'mixins/calendar.html' with page="reservation_page" reservation="reservation" days=days %}
+                    </div>
+                </div>
+                <div class="w-2/5">
+                    
+                    {% if reservation.status == 'confirmed' and reservation.is_finished %}
+                        <span class="font-medium text-2xl text-center w-full block mb-5">Write your review</span>
+                        <form action="{% url 'reviews:create' reservation.pk %}" method="post" class="w-full">
+                            {% csrf_token %}
+                            <div class="border p-3 border-gray-400 rounded">
+                                <textarea name="review" id="" rows="5" placeholder="Write a review" class="w-full resize-none"></textarea>
+                            </div>
+                            <div class="grid grid-cols-2 gap-1 mt-1">
+                                <div class="border p-3 border-gray-400 rounded">
+                                    <input type="number" name="accuracy" placeholder="Accuracy Points" min=0 max=5 class="outline-none w-full">
+                                </div>
+                                <div class="border p-3 border-gray-400 rounded">
+                                    <input type="number" name="communication" placeholder="Communication Points" min=0 max=5 class="outline-none w-full">
+                                </div>
+                                <div class="border p-3 border-gray-400 rounded">
+                                    <input type="number" name="cleanliness" placeholder="Cleanliness Points" min=0 max=5 class="outline-none w-full">
+                                </div>
+                                <div class="border p-3 border-gray-400 rounded">
+                                    <input type="number" name="location" placeholder="Location Points" min=0 max=5 class="outline-none w-full">
+                                </div>
+                                <div class="border p-3 border-gray-400 rounded">
+                                    <input type="number" name="check_in" placeholder="Check In Points" min=0 max=5 class="outline-none w-full">
+                                </div>
+                                <div class="border p-3 border-gray-400 rounded">
+                                    <input type="number" name="value" placeholder="Value Points" min=0 max=5 class="outline-none w-full">
+                                </div>
+                            </div>
+                            <button class="form_button mt-5">Submit Review</button>
+                        </form>
+                    {% endif %}
+                        
+                </div>
+            </main>
+        </div>
+    </div>
+{% endblock content %}

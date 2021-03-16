@@ -14,4 +14,9 @@ urlpatterns = [
         views.ReservationListView.as_view(),
         name="list",
     ),
+    path(
+        "<int:pk>/",
+        views.reservationDetail,
+        name="detail",
+    ),
 ]

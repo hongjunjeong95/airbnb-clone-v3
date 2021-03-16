@@ -1,7 +1,7 @@
 <ul class="grid grid-cols-4 grid-rows-2-300px auto-rows-300px gap-4 gap-y-6">
     {% for reservation in reservations %}
         <li class="w-full">
-            <a href="#">
+            <a href="{% url 'reservations:detail' reservation.pk %}">
                 <div class="rounded-lg bg-cover bg-center h-3/4 mb-2" style="background-image:url('{{reservation.room.get_first_photo}}')">
                     <div class="flex items-center {% if reservation.room.host.superhost %}justify-between{% else %}justify-end{% endif %}">
                         {% if reservation.room.host.superhost %}

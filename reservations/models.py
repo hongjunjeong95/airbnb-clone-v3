@@ -8,7 +8,7 @@ from core import models as core_models
 class BookedDay(core_models.TimeStampedModel):
     day = models.DateField()
     reservation = models.ForeignKey(
-        "Reservation", related_name="bookedDay", on_delete=models.CASCADE
+        "Reservation", related_name="bookedDays", on_delete=models.CASCADE
     )
 
     class Meta:
