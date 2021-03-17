@@ -1,7 +1,10 @@
 import datetime
+
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from django.shortcuts import reverse
+
 from core import models as core_models
 
 
@@ -44,6 +47,9 @@ class Reservation(core_models.TimeStampedModel):
 
     def __str__(self):
         return f"{self.room} - {self.check_in}"
+
+    def get_absolute_url(self):
+        return reverse("reservations:detail", kwargs={"pk": self.pk})
 
     def save(self, *args, **kwargs):
         if self.pk is None:

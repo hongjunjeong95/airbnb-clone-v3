@@ -26,7 +26,7 @@ def createReservation(request, room_pk, year, month, day):
         messages.error(request, "Can't reserve that room")
         return redirect(reverse("core:home"))
     except reservation_models.BookedDay.DoesNotExist:
-        reservation_models.Reservation.objects.create(
+        reservation = reservation_models.Reservation.objects.create(
             status=reservation_models.Reservation.STATUS_PENDING,
             guest=request.user,
             room=room,
@@ -35,7 +35,7 @@ def createReservation(request, room_pk, year, month, day):
         )
 
         messages.success(request, f"Reserve {room} successfully")
-        return redirect(reverse("rooms:room-detail", kwargs={"pk": room_pk}))
+        return redirect(reverse("reservations:detail", kwargs={"pk": reservation.pk}))
 
 
 @login_required
