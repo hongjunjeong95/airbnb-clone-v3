@@ -26,7 +26,7 @@ urlpatterns = [
     ),
     path(
         "<int:user_pk>/reservation/<int:room_pk>/room-list/",
-        views.reservationListOnRoom,
+        views.ReservationListOnRoomView.as_view(),
         name="host-room-list",
     ),
 ]

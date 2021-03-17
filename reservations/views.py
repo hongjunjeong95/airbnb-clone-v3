@@ -182,3 +182,37 @@ def reservationListOnRoom(request, user_pk, room_pk):
         "pages/reservations/reservation_list_onRoom.html",
         context={"reservations": reservations, "room_name": room_name},
     )
+
+
+class ReservationListOnRoomView(mixins.LoggedInOnlyView, ListView):
+
+    """ Reservation List on Room View Definition """
+
+    template_name = "pages/reservations/reservation_list_onRoom.html"
+    context_object_name = "reservations"
+    paginate_by = 12
+    paginate_orphans = 6
+    ordering = "created"
+
+    def get_queryset(self):
+        user_pk = self.kwargs.get("user_pk")
+        room_pk = self.kwargs.get("room_pk")
+        reservations = reservation_models.Reservation.objects.filter(
+            room__host_id=user_pk, room_id=room_pk
+        )
+
+        if user_pk != self.request.user.pk:
+            return redirect(reverse("core:home"))
+
+        return reservations
+
+    def get_context_data(self, **kwargs):
+        user_pk = self.kwargs.get("user_pk")
+        room_pk = self.kwargs.get("room_pk")
+        reservations = reservation_models.Reservation.objects.filter(
+            room__host_id=user_pk, room_id=room_pk
+        )
+        room_name = reservations[0].room.name
+        context = super().get_context_data()
+        context["room_name"] = room_name
+        return context
