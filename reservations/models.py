@@ -74,7 +74,9 @@ class Reservation(core_models.TimeStampedModel):
                     day = start + datetime.timedelta(days=i)
                     BookedDay.objects.create(day=day, reservation=self)
                 return
-        return
+        else:
+            # 여기서 super().save()를 안 하면 status 값이 confirmed나 canceled로 안 바뀐다.
+            return super().save(*args, **kwargs)
 
     def in_progress(self):
         now = timezone.localtime().date()

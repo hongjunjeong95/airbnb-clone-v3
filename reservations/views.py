@@ -154,36 +154,6 @@ def reservationHostList(request, pk):
     )
 
 
-@login_required
-def reservationListOnRoom(request, user_pk, room_pk):
-    qs = reservation_models.Reservation.objects.filter(
-        room__host_id=user_pk, room_id=room_pk
-    )
-    if qs is None:
-        messages.error(request, "Rservation does not exist")
-        return redirect(reverse("core:home"))
-    if qs[0].room.host != request.user:
-        raise Http404()
-    room_name = qs[0].room.name
-
-    page = request.GET.get("page", 1)
-
-    if page == "":
-        page = 1
-    else:
-        page = int(page)
-
-    page_sector = (page - 1) // 5
-    page_sector = page_sector * 5
-    paginator = Paginator(qs, 8, orphans=4)
-    reservations = paginator.get_page(page)
-    return render(
-        request,
-        "pages/reservations/reservation_list_onRoom.html",
-        context={"reservations": reservations, "room_name": room_name},
-    )
-
-
 class ReservationListOnRoomView(mixins.LoggedInOnlyView, ListView):
 
     """ Reservation List on Room View Definition """
@@ -216,3 +186,31 @@ class ReservationListOnRoomView(mixins.LoggedInOnlyView, ListView):
         context = super().get_context_data()
         context["room_name"] = room_name
         return context
+
+
+@login_required
+def confirmReservation(request, pk):
+    reservation = reservation_models.Reservation.objects.get_or_none(pk=pk)
+    if reservation is None:
+        messages.error(request, "Rservation does not exist")
+        return redirect(reverse("core:home"))
+    # Route Protection
+    if reservation.room.host != request.user:
+        raise Http404()
+    reservation.status = reservation_models.Reservation.STATUS_CONFIRMED
+    reservation.save()
+
+    room = reservation.room
+
+    user_pk = request.user.pk
+    room_pk = room.pk
+
+    return redirect(
+        reverse(
+            "reservations:host-room-list",
+            kwargs={
+                "user_pk": user_pk,
+                "room_pk": room_pk,
+            },
+        )
+    )
