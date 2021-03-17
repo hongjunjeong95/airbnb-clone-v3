@@ -149,6 +149,36 @@ def reservationHostList(request, pk):
     rooms = paginator.get_page(page)
     return render(
         request,
-        "pages/reservations/reservation_host_list.html",
+        "pages/reservations/reservation_room_list_onHost.html",
         context={"rooms": rooms, "page_sector": page_sector},
+    )
+
+
+@login_required
+def reservationListOnRoom(request, user_pk, room_pk):
+    qs = reservation_models.Reservation.objects.filter(
+        room__host_id=user_pk, room_id=room_pk
+    )
+    if qs is None:
+        messages.error(request, "Rservation does not exist")
+        return redirect(reverse("core:home"))
+    if qs[0].room.host != request.user:
+        raise Http404()
+    room_name = qs[0].room.name
+
+    page = request.GET.get("page", 1)
+
+    if page == "":
+        page = 1
+    else:
+        page = int(page)
+
+    page_sector = (page - 1) // 5
+    page_sector = page_sector * 5
+    paginator = Paginator(qs, 8, orphans=4)
+    reservations = paginator.get_page(page)
+    return render(
+        request,
+        "pages/reservations/reservation_list_onRoom.html",
+        context={"reservations": reservations, "room_name": room_name},
     )
