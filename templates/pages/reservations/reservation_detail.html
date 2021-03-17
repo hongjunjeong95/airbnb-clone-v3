@@ -45,7 +45,7 @@
                     </div>
                     <div class="flex mb-10 items-center">
                         <button class="button w-48 bg-red-500">
-                            <a  href="#">Cancel Reservation</a>
+                            <a href="{% url 'reservations:cancel' reservation.pk %}">Cancel Reservation</a>
                         </button>
                     </div>
                     <div class="w-11/12 grid grid-cols-2 gap-10 border-b border-gray-300 mb-6 pb-6">

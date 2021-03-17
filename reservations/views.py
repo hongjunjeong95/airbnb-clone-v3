@@ -214,3 +214,16 @@ def confirmReservation(request, pk):
             },
         )
     )
+
+
+@login_required
+def cancelReservation(request, pk):
+    reservation = reservation_models.Reservation.objects.get_or_none(pk=pk)
+    if reservation is None:
+        messages.error(request, "Rservation does not exist")
+        return redirect(reverse("core:home"))
+    if request.user != reservation.guest and request.user != reservation.room.host:
+        raise Http404()
+    room = reservation.room
+    reservation.delete()
+    return redirect(reverse("rooms:room-detail", kwargs={"pk": room.pk}))

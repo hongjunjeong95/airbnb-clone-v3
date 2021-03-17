@@ -18,4 +18,5 @@ urlpatterns = [
         name="host-room-list",
     ),
     path("<int:pk>/confirm/", views.confirmReservation, name="confirm"),
+    path("<int:pk>/cancel/", views.cancelReservation, name="cancel"),
 ]
