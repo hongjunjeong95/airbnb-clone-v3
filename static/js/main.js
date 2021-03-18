@@ -1,11 +1,61 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
+var _axios = _interopRequireDefault(require("axios"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+_axios["default"].defaults.xsrfCookieName = "csrftoken";
+_axios["default"].defaults.xsrfHeaderName = "X-CSRFToken";
+var reviewDeletes = document.querySelectorAll(".reviewDelete");
+
+var handleDelete = function handleDelete(e) {
+  var btn = e.target;
+  var reviewNode = btn.parentNode.parentNode.parentNode;
+  var reviewSection = reviewNode.parentNode;
+  var review_pk = reviewNode.id;
+  var room_pk = window.location.href.split("/")[4];
+  reviewSection.removeChild(reviewNode);
+  (0, _axios["default"])({
+    method: "POST",
+    url: "/reviews/".concat(room_pk, "/").concat(review_pk, "/delete/")
+  });
+};
+
+var init = function init() {
+  if (reviewDeletes) {
+    reviewDeletes.forEach(function (reviewDelete) {
+      reviewDelete.addEventListener("click", handleDelete);
+    });
+  }
+};
+
+init();
+
+},{"axios":5}],2:[function(require,module,exports){
+"use strict";
+
 require("./translator");
 
-require("./review");
+require("./updateReview");
 
-},{"./review":2,"./translator":3}],2:[function(require,module,exports){
+require("./deleteReview");
+
+},{"./deleteReview":1,"./translator":3,"./updateReview":4}],3:[function(require,module,exports){
+"use strict";
+
+var jsLang = document.getElementById("js-lang");
+
+var handleChange = function handleChange() {
+  var selected = jsLang.value;
+  fetch("/users/switch-language?lang=".concat(selected)).then(function () {
+    return window.location.reload();
+  });
+};
+
+jsLang.addEventListener("change", handleChange);
+
+},{}],4:[function(require,module,exports){
 "use strict";
 
 var _axios = _interopRequireDefault(require("axios"));
@@ -15,21 +65,20 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 _axios["default"].defaults.xsrfCookieName = "csrftoken";
 _axios["default"].defaults.xsrfHeaderName = "X-CSRFToken";
 var reviewAmends = document.querySelectorAll(".reviewAmend");
-var reviewDelete = document.getElementById("reviewDelete");
 
 var handleAmendInput = function handleAmendInput(event) {
   event.preventDefault();
   var room_pk = window.location.href.split("/")[4];
   var form = event.target;
   var p = form.parentNode;
+  var updateBtn = p.previousSibling.previousSibling.childNodes[3].childNodes[1];
+  var reviewNode = p.parentNode;
   var textarea = form.querySelector("textarea");
   var text = textarea.value;
-  var review_pk = p.getAttribute("name");
+  var review_pk = reviewNode.id;
   p.innerHTML = text;
-  reviewAmends.forEach(function (reviewAmend) {
-    reviewAmend.addEventListener("click", handleAmend);
-    reviewAmend.classList.remove("hidden");
-  });
+  updateBtn.addEventListener("click", handleAmend);
+  updateBtn.classList.remove("hidden");
   (0, _axios["default"])({
     method: "POST",
     url: "/reviews/".concat(room_pk, "/").concat(review_pk, "/update/"),
@@ -73,23 +122,9 @@ var init = function init() {
 
 init();
 
-},{"axios":4}],3:[function(require,module,exports){
-"use strict";
-
-var jsLang = document.getElementById("js-lang");
-
-var handleChange = function handleChange() {
-  var selected = jsLang.value;
-  fetch("/users/switch-language?lang=".concat(selected)).then(function () {
-    return window.location.reload();
-  });
-};
-
-jsLang.addEventListener("change", handleChange);
-
-},{}],4:[function(require,module,exports){
+},{"axios":5}],5:[function(require,module,exports){
 module.exports = require('./lib/axios');
-},{"./lib/axios":6}],5:[function(require,module,exports){
+},{"./lib/axios":7}],6:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -270,7 +305,7 @@ module.exports = function xhrAdapter(config) {
   });
 };
 
-},{"../core/buildFullPath":12,"../core/createError":13,"./../core/settle":17,"./../helpers/buildURL":21,"./../helpers/cookies":23,"./../helpers/isURLSameOrigin":26,"./../helpers/parseHeaders":28,"./../utils":30}],6:[function(require,module,exports){
+},{"../core/buildFullPath":13,"../core/createError":14,"./../core/settle":18,"./../helpers/buildURL":22,"./../helpers/cookies":24,"./../helpers/isURLSameOrigin":27,"./../helpers/parseHeaders":29,"./../utils":31}],7:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -328,7 +363,7 @@ module.exports = axios;
 // Allow use of default import syntax in TypeScript
 module.exports.default = axios;
 
-},{"./cancel/Cancel":7,"./cancel/CancelToken":8,"./cancel/isCancel":9,"./core/Axios":10,"./core/mergeConfig":16,"./defaults":19,"./helpers/bind":20,"./helpers/isAxiosError":25,"./helpers/spread":29,"./utils":30}],7:[function(require,module,exports){
+},{"./cancel/Cancel":8,"./cancel/CancelToken":9,"./cancel/isCancel":10,"./core/Axios":11,"./core/mergeConfig":17,"./defaults":20,"./helpers/bind":21,"./helpers/isAxiosError":26,"./helpers/spread":30,"./utils":31}],8:[function(require,module,exports){
 'use strict';
 
 /**
@@ -349,7 +384,7 @@ Cancel.prototype.__CANCEL__ = true;
 
 module.exports = Cancel;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 var Cancel = require('./Cancel');
@@ -408,14 +443,14 @@ CancelToken.source = function source() {
 
 module.exports = CancelToken;
 
-},{"./Cancel":7}],9:[function(require,module,exports){
+},{"./Cancel":8}],10:[function(require,module,exports){
 'use strict';
 
 module.exports = function isCancel(value) {
   return !!(value && value.__CANCEL__);
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -512,7 +547,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = Axios;
 
-},{"../helpers/buildURL":21,"./../utils":30,"./InterceptorManager":11,"./dispatchRequest":14,"./mergeConfig":16}],11:[function(require,module,exports){
+},{"../helpers/buildURL":22,"./../utils":31,"./InterceptorManager":12,"./dispatchRequest":15,"./mergeConfig":17}],12:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -566,7 +601,7 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 
 module.exports = InterceptorManager;
 
-},{"./../utils":30}],12:[function(require,module,exports){
+},{"./../utils":31}],13:[function(require,module,exports){
 'use strict';
 
 var isAbsoluteURL = require('../helpers/isAbsoluteURL');
@@ -588,7 +623,7 @@ module.exports = function buildFullPath(baseURL, requestedURL) {
   return requestedURL;
 };
 
-},{"../helpers/combineURLs":22,"../helpers/isAbsoluteURL":24}],13:[function(require,module,exports){
+},{"../helpers/combineURLs":23,"../helpers/isAbsoluteURL":25}],14:[function(require,module,exports){
 'use strict';
 
 var enhanceError = require('./enhanceError');
@@ -608,7 +643,7 @@ module.exports = function createError(message, config, code, request, response) 
   return enhanceError(error, config, code, request, response);
 };
 
-},{"./enhanceError":15}],14:[function(require,module,exports){
+},{"./enhanceError":16}],15:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -689,7 +724,7 @@ module.exports = function dispatchRequest(config) {
   });
 };
 
-},{"../cancel/isCancel":9,"../defaults":19,"./../utils":30,"./transformData":18}],15:[function(require,module,exports){
+},{"../cancel/isCancel":10,"../defaults":20,"./../utils":31,"./transformData":19}],16:[function(require,module,exports){
 'use strict';
 
 /**
@@ -733,7 +768,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
   return error;
 };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -822,7 +857,7 @@ module.exports = function mergeConfig(config1, config2) {
   return config;
 };
 
-},{"../utils":30}],17:[function(require,module,exports){
+},{"../utils":31}],18:[function(require,module,exports){
 'use strict';
 
 var createError = require('./createError');
@@ -849,7 +884,7 @@ module.exports = function settle(resolve, reject, response) {
   }
 };
 
-},{"./createError":13}],18:[function(require,module,exports){
+},{"./createError":14}],19:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -871,7 +906,7 @@ module.exports = function transformData(data, headers, fns) {
   return data;
 };
 
-},{"./../utils":30}],19:[function(require,module,exports){
+},{"./../utils":31}],20:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -973,7 +1008,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 }).call(this)}).call(this,require('_process'))
-},{"./adapters/http":5,"./adapters/xhr":5,"./helpers/normalizeHeaderName":27,"./utils":30,"_process":31}],20:[function(require,module,exports){
+},{"./adapters/http":6,"./adapters/xhr":6,"./helpers/normalizeHeaderName":28,"./utils":31,"_process":32}],21:[function(require,module,exports){
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -986,7 +1021,7 @@ module.exports = function bind(fn, thisArg) {
   };
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1058,7 +1093,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
   return url;
 };
 
-},{"./../utils":30}],22:[function(require,module,exports){
+},{"./../utils":31}],23:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1074,7 +1109,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
     : baseURL;
 };
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1129,7 +1164,7 @@ module.exports = (
     })()
 );
 
-},{"./../utils":30}],24:[function(require,module,exports){
+},{"./../utils":31}],25:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1145,7 +1180,7 @@ module.exports = function isAbsoluteURL(url) {
   return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
 };
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1158,7 +1193,7 @@ module.exports = function isAxiosError(payload) {
   return (typeof payload === 'object') && (payload.isAxiosError === true);
 };
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1228,7 +1263,7 @@ module.exports = (
     })()
 );
 
-},{"./../utils":30}],27:[function(require,module,exports){
+},{"./../utils":31}],28:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -1242,7 +1277,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
   });
 };
 
-},{"../utils":30}],28:[function(require,module,exports){
+},{"../utils":31}],29:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1297,7 +1332,7 @@ module.exports = function parseHeaders(headers) {
   return parsed;
 };
 
-},{"./../utils":30}],29:[function(require,module,exports){
+},{"./../utils":31}],30:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1326,7 +1361,7 @@ module.exports = function spread(callback) {
   };
 };
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 var bind = require('./helpers/bind');
@@ -1679,7 +1714,7 @@ module.exports = {
   stripBOM: stripBOM
 };
 
-},{"./helpers/bind":20}],31:[function(require,module,exports){
+},{"./helpers/bind":21}],32:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -1865,4 +1900,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[1]);
+},{}]},{},[2]);

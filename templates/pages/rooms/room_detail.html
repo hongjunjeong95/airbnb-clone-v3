@@ -99,7 +99,7 @@
                 <div class="text-lg font-bold mb-8">
                     <i class="fas fa-star text-red-500"></i>
                     <span>{{room.get_review_points}} {% trans "points" %}</span>
-                    <span>({% blocktrans with count=room.reviews.count %}{{count}} review{{count|pluralize}}{% endblocktrans %})</span>
+                    <span class="review_count">({% blocktrans with count=room.reviews.count %}{{count}} review{{count|pluralize}}{% endblocktrans %})</span>
                 </div>
                 <div class="review_points">
                     <div>
@@ -129,34 +129,34 @@
                 </div>
                 
                 <div class="grid grid-cols-2 gap-x-52 gap-y-3 mb-10">
-                {% for review in room.reviews.all %}
-                    <div>
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center mb-4">
-                                {% if review.user.avatar %}
-                                <a href="{% url 'users:profile' review.user.pk%}">
-                                    <img src="{{review.user.avatar.url}}" class="img w-16 h-16 mr-4" alt="User avatar" title="User Avatar">
-                                </a>
-                                {% else %}
-                                <a href="{% url 'users:profile' review.user.pk%}">
-                                    <div class="img w-16 h-16 mr-4">{{review.user.first_name|first|upper}}</div>
-                                </a>
+                    {% for review in room.reviews.all %}
+                        <div id="{{review.pk}}">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center mb-4">
+                                    {% if review.user.avatar %}
+                                    <a href="{% url 'users:profile' review.user.pk%}">
+                                        <img src="{{review.user.avatar.url}}" class="img w-16 h-16 mr-4" alt="User avatar" title="User Avatar">
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'users:profile' review.user.pk%}">
+                                        <div class="img w-16 h-16 mr-4">{{review.user.first_name|first|upper}}</div>
+                                    </a>
+                                    {% endif %}
+                                    <div class="flex flex-col">
+                                        <span class="font-bold">{{review.user|capfirst}}</span>
+                                        <span class="text-sm text-gray-400">{{review.created}}</span>
+                                    </div>
+                                </div>
+                                {% if review.user == user %}
+                                    <div class="w-24">
+                                        <button class="reviewAmend review_button bg-blue-600 mt-0">Update</button>
+                                        <button class="reviewDelete review_button bg-red-600 mt-3">Delete</button>
+                                    </div>
                                 {% endif %}
-                                <div class="flex flex-col">
-                                    <span class="font-bold">{{review.user|capfirst}}</span>
-                                    <span class="text-sm text-gray-400">{{review.created}}</span>
-                                </div>
                             </div>
-                            {% if review.user == user %}
-                                <div class="w-24">
-                                    <button class="reviewAmend review_button bg-blue-600 mt-0">Update</button>
-                                    <button id="reviewDelete" class="review_button bg-red-600 mt-3">Delete</button>
-                                </div>
-                            {% endif %}
+                            <p class="mb-4 font-normal">{{review.review}}</p>
                         </div>
-                        <p class="mb-4 font-normal" name="{{review.pk}}">{{review.review}}</p>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
                 </div>
             </div>
             <div class="px-6">
@@ -181,7 +181,7 @@
                             <div class="flex text-base mb-8">
                                 <div class="host-info__reviews mr-4">
                                     <i class="fas fa-star text-red-500 mr-2"></i>
-                                    <span>{% blocktrans with count=room.reviews.count %}{{count}} review{{count|pluralize}}{% endblocktrans %}</span>
+                                    <span class="review_count">{% blocktrans with count=room.reviews.count %}{{count}} review{{count|pluralize}}{% endblocktrans %}</span>
                                 </div>
                                 <div class="host-info__superhost">
                                     {% if room.host.superhost %}

@@ -4,23 +4,23 @@ axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
 const reviewAmends = document.querySelectorAll(".reviewAmend");
-const reviewDelete = document.getElementById("reviewDelete");
 
 const handleAmendInput = (event) => {
   event.preventDefault();
   const room_pk = window.location.href.split("/")[4];
   const form = event.target;
   const p = form.parentNode;
+  const updateBtn =
+    p.previousSibling.previousSibling.childNodes[3].childNodes[1];
+  const reviewNode = p.parentNode;
   const textarea = form.querySelector("textarea");
   const text = textarea.value;
-  const review_pk = p.getAttribute("name");
+  const review_pk = reviewNode.id;
 
   p.innerHTML = text;
 
-  reviewAmends.forEach((reviewAmend) => {
-    reviewAmend.addEventListener("click", handleAmend);
-    reviewAmend.classList.remove("hidden");
-  });
+  updateBtn.addEventListener("click", handleAmend);
+  updateBtn.classList.remove("hidden");
 
   axios({
     method: "POST",

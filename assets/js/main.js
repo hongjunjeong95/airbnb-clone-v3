@@ -1,2 +1,3 @@
 import "./translator";
-import "./review";
+import "./updateReview";
+import "./deleteReview";
