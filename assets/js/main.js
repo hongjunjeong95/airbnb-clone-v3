@@ -1,1 +1,2 @@
 import "./translator";
+import "./review";

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-07 19:11+0900\n"
+"POT-Creation-Date: 2021-03-18 05:12+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -77,8 +77,7 @@ msgstr "점"
 
 #: .\templates\pages\rooms\room_detail.html:102
 #: .\templates\pages\rooms\room_detail.html:176
-#, python-format
-msgid "%(count)s review"
+msgid "%(count)s review%(count|pluralize)s"
 msgstr "후기 %(count)s개"
 
 #: .\templates\pages\rooms\room_detail.html:106
@@ -148,7 +147,6 @@ msgid "Guest mode"
 msgstr "게스트 모드"
 
 #: .\templates\partials\nav.html:17
-#| msgid "Host"
 msgid "Host mode"
 msgstr "호스트 모드"
 
@@ -199,6 +197,9 @@ msgstr "깃허브"
 #: .\users\models.py:44
 msgid "Kakao"
 msgstr "카카오"
+
+#~ msgid "%(count)s review"
+#~ msgstr "후기 %(count)s개"
 
 #~ msgid "Stop Hosting"
 #~ msgstr "게스트 모드"

@@ -4,6 +4,9 @@ from core import models as core_models
 
 
 class Review(core_models.TimeStampedModel):
+    class Meta:
+        ordering = ["-created"]
+
     review = models.TextField()
     accuracy = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)]
