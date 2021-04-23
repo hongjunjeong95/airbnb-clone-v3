@@ -1,6 +1,6 @@
-from django.shortcuts import redirect, reverse, render
+from django.shortcuts import redirect, reverse
 from django.views.generic import DetailView
-from django.core.paginator import Paginator
+from django.views.generic import ListView
 
 from conversations import models as conversation_models
 from users import models as user_models
@@ -36,22 +36,29 @@ class ConversationDetailView(mixins.LoggedInOnlyView, DetailView):
     template_name = "pages/conversations/conversation_detail.html"
 
 
-def conversationList(request):
-    qs = conversation_models.Conversation.objects.filter(participants=request.user)
+class ConversationList(mixins.LoggedInOnlyView, ListView):
 
-    page = request.GET.get("page", 1)
+    """ Conversation List View Definition """
 
-    if page == "":
-        page = 1
-    else:
-        page = int(page)
+    template_name = "pages/conversations/conversation_host_list.html"
+    context_object_name = "conversations"
+    paginate_by = 12
+    paginate_orphans = 6
+    ordering = "created"
 
-    page_sector = ((page - 1) // 5) * 5
-    paginator = Paginator(qs, 12, orphans=6)
-    conversations = paginator.get_page(page)
+    def get_queryset(self):
+        return conversation_models.Conversation.objects.filter(
+            participants=self.request.user
+        )
 
-    return render(
-        request,
-        "pages/conversations/conversation_host_list.html",
-        context={"conversations": conversations, "page_sector": page_sector},
-    )
+    def get_context_data(self, **kwargs):
+        page = int(self.request.GET.get("page", 1))
+        if page == "":
+            page = 1
+        else:
+            page = int(page)
+        page_sector = (page - 1) // 5
+        page_sector = page_sector * 5
+        context = super().get_context_data()
+        context["page_sector"] = page_sector
+        return context

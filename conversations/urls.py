@@ -17,7 +17,7 @@ urlpatterns = [
     ),
     path(
         "conversation-list/",
-        views.conversationList,
+        views.ConversationList.as_view(),
         name="conversation-list",
     ),
 ]
