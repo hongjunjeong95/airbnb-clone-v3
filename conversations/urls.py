@@ -10,4 +10,9 @@ urlpatterns = [
         views.createConversation,
         name="create-conversation",
     ),
+    path(
+        "<int:pk>/conversation-detail/",
+        views.conversationDetail,
+        name="conversation-detail",
+    ),
 ]

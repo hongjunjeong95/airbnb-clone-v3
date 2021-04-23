@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, reverse
+from django.shortcuts import render, redirect, reverse
 from . import models as conversation_models
 from users import models as user_models
 
@@ -20,3 +20,13 @@ def createConversation(request, host_pk, guest_pk):
         return redirect(
             reverse("conversations:conversation-detail", kwargs={"pk": conversation.pk})
         )
+
+
+def conversationDetail(request, pk):
+    conversation = conversation_models.Conversation.objects.get(pk=pk)
+
+    return render(
+        request,
+        "pages/conversations/conversation_detail.html",
+        context={"conversation": conversation},
+    )
