@@ -1,3 +1,5 @@
+{% load on_favs %}
+
 <ul class="grid grid-cols-4 grid-rows-2-300px auto-rows-300px gap-4 gap-y-6">
   {% for room in rooms %}
     <li class="w-full relative">
@@ -25,9 +27,16 @@
           </div>
         </div>
       </a>
-      <a href="#" class="mr-3 absolute top-5 right-2">
-        <i class="far fa-heart  text-2xl text-white justify-end text-center"></i>
-      </a>
+      {% on_favs room as on_favs_boolean %}
+      {% if on_favs_boolean %}
+        <a href="{% url 'lists:toggle-list' room.pk %}?action=remove" class="mr-3 absolute top-5 right-2">
+          <i class="fas text-red-500 fa-heart  text-2xl justify-end text-center"></i>
+        </a>
+      {% else %}
+        <a href="{% url 'lists:toggle-list' room.pk %}?action=add" class="mr-3 absolute top-5 right-2">
+          <i class="far fa-heart  text-2xl text-white justify-end text-center"></i>
+        </a>
+      {% endif %}
     </li>
   {% endfor %}
 </ul>
