@@ -205,7 +205,7 @@
                             <span class="mb-4">{% trans "Response rate" %} : 100%</span>
                             <span class="mb-6">{% trans "Response time : In one hour" %}</span>
                             <button class="button px-1 py-2 w-1/2">
-                                <a href="#">{% trans "Contact the host" %}</a>
+                                <a href="{% url 'conversations:create-conversation' room.host.pk user.pk %}">Contact the host</a>
                             </button>
                         </div>
                     </div>
