@@ -5,5 +5,5 @@ app_name = "lists"
 
 urlpatterns = [
     path("<int:room_pk>/toggle-list/", views.toggleList, name="toggle-list"),
-    path("favs/", views.favs, name="favs"),
+    path("favs/", views.FavsList.as_view(), name="favs"),
 ]

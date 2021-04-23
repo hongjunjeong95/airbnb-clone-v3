@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect, reverse
-from django.core.paginator import Paginator
+from django.shortcuts import redirect, reverse
+from django.views.generic import ListView
 from django.contrib import messages
 
-from . import models as list_models
+from lists import models as list_models
 from rooms import models as room_models
+from users import mixins
 
 
 def toggleList(request, room_pk):
@@ -23,25 +24,32 @@ def toggleList(request, room_pk):
     return redirect(reverse("core:home"))
 
 
-def favs(request):
-    page = request.GET.get("page", 1)
+class FavsList(mixins.LoggedInOnlyView, ListView):
 
-    if page == "":
-        page = 1
-    else:
-        page = int(page)
+    """ Fav List View Definition """
 
-    page_sector = ((page - 1) // 5) * 5
+    template_name = "pages/lists/fav_list.html"
+    context_object_name = "rooms"
+    paginate_by = 12
+    paginate_orphans = 6
+    ordering = "created"
 
-    the_list = list_models.List.objects.get_or_none(user=request.user)
-    if the_list is None:
-        messages.error(request, "List does not exist")
-        return redirect(reverse("core:home"))
-    qs = the_list.rooms.all()
-    paginator = Paginator(qs, 12, orphans=6)
-    rooms = paginator.get_page(page)
-    return render(
-        request,
-        "pages/lists/list_detail.html",
-        context={"rooms": rooms, "page_sector": page_sector},
-    )
+    def get_queryset(self):
+        the_list = list_models.List.objects.get_or_none(user=self.request.user)
+        if the_list is None:
+            messages.error(self.request, "List does not exist")
+            return redirect(reverse("core:home"))
+
+        return the_list.rooms.all()
+
+    def get_context_data(self, **kwargs):
+        page = int(self.request.GET.get("page", 1))
+        if page == "":
+            page = 1
+        else:
+            page = int(page)
+        page_sector = (page - 1) // 5
+        page_sector = page_sector * 5
+        context = super().get_context_data()
+        context["page_sector"] = page_sector
+        return context
