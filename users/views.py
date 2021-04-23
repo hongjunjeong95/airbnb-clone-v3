@@ -15,6 +15,7 @@ from django.urls import reverse_lazy
 from django.http import HttpResponse, Http404
 from . import forms, mixins, models
 from lists import models as list_models
+from conversations import models as conversation_models
 from .exception import (
     LoggedOutOnlyFunctionView,
     GithubException,
@@ -300,9 +301,15 @@ class UserProfileView(mixins.LoggedInOnlyView, DetailView):
         else:
             list_room_count = the_list.rooms.count()
 
+        conversations = conversation_models.Conversation.objects.filter(
+            participants=self.request.user
+        )
+        conversation_count = conversations.count()
+
         context["page_sector"] = page_sector
         context["rooms"] = rooms
         context["list_room_count"] = list_room_count
+        context["conversation_count"] = conversation_count
         return context
 
 

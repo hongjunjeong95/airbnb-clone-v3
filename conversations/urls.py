@@ -15,4 +15,9 @@ urlpatterns = [
         views.ConversationDetailView.as_view(),
         name="conversation-detail",
     ),
+    path(
+        "conversation-list/",
+        views.conversationList,
+        name="conversation-list",
+    ),
 ]
