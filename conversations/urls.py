@@ -20,4 +20,9 @@ urlpatterns = [
         views.ConversationList.as_view(),
         name="conversation-list",
     ),
+    path(
+        "<int:conversation_pk>/messages/",
+        views.createMessage,
+        name="create-message",
+    ),
 ]

@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, reverse
-from django.views.generic import DetailView
-from django.views.generic import ListView
+from django.views.generic import DetailView, ListView
+from django.contrib import messages
 
 from conversations import models as conversation_models
 from users import models as user_models
@@ -62,3 +62,21 @@ class ConversationList(mixins.LoggedInOnlyView, ListView):
         context = super().get_context_data()
         context["page_sector"] = page_sector
         return context
+
+
+def createMessage(request, conversation_pk):
+    message = request.POST.get("message")
+    try:
+        conversation = conversation_models.Conversation.objects.get(pk=conversation_pk)
+        pk = []
+        for participant in conversation.participants.all():
+            pk.append(participant.pk)
+        if message is not None:
+            conversation_models.Message.objects.create(
+                message=message, user=request.user, conversation=conversation
+            )
+    except conversation_models.Conversation.DoesNotExist:
+        messages.error(request, "Conversation does not exist")
+    return redirect(
+        reverse("conversations:conversation-detail", kwargs={"pk": conversation.pk})
+    )
