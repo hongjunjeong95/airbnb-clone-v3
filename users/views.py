@@ -14,6 +14,7 @@ from django.shortcuts import redirect, reverse, render
 from django.urls import reverse_lazy
 from django.http import HttpResponse, Http404
 from . import forms, mixins, models
+from lists import models as list_models
 from .exception import (
     LoggedOutOnlyFunctionView,
     GithubException,
@@ -314,8 +315,15 @@ class UserProfileView(mixins.LoggedInOnlyView, DetailView):
         paginator = Paginator(qs, 12, orphans=6)
         rooms = paginator.get_page(page)
 
+        the_list = list_models.List.objects.get_or_none(user=self.request.user)
+        if the_list is None:
+            list_room_count = 0
+        else:
+            list_room_count = the_list.rooms.count()
+
         context["page_sector"] = page_sector
         context["rooms"] = rooms
+        context["list_room_count"] = list_room_count
         return context
 
 
