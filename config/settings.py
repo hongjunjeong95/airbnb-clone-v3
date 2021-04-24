@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.environ.get("DEBUG")
+DEBUG = bool(os.environ.get("DEBUG"))
 
 ALLOWED_HOSTS = ["*"]
 
@@ -108,6 +108,7 @@ else:
             "PASSWORD": os.environ.get("RDS_PASSWORD"),
             "PORT": "5432",
         }
+    }
 
 
 # Password validation
@@ -180,4 +181,4 @@ if not DEBUG:
 
     AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
     AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.ap-northeast-2.amazonaws.com"
-    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/" 
+    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
